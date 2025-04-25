@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let casoAtual = null;
 
-  fetch('http://localhost:5000/api/casos', {
+  fetch(https://odontocrim-api.onrender.com/api/casos', {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(res => res.json())
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     relatorioContainer.style.display = 'none';
 
     try {
-      const resCaso = await fetch(`http://localhost:5000/api/casos/${casoId}`, {
+      const resCaso = await fetch(`https://odontocrim-api.onrender.com/api/casos/${casoId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Cache-Control': 'no-cache'
