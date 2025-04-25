@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tipo = tipoInput.value;
 
     try {
-      const response = await fetch('https://odontoforense-backend.onrender.com/usuarios', {
+      const response = await fetch('https://odontoforense-backend.onrender.com/api/usuarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tabelaUsuarios || !tbody) return;
 
     try {
-      const res = await fetch('https://odontocrim-api.onrender.com/api/usuarios', {
+      const res = await fetch('https://odontoforense-backend.onrender.com/api/usuarios', {
         headers: {
           Authorization: `Bearer ${token}`
         }
