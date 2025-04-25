@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const response = await fetch('https://odontocrim-api.onrender.com/api/casos', {
+        const response = await fetch('https://odontoforense-backend.onrender.com/api/casos', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
