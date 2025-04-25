@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tipo = tipoInput.value;
 
     try {
-      const response = await fetch('https://odontocrim-api.onrender.com/api/usuarios', {
+      const response = await fetch('https://odontoforense-backend.onrender.com/usuarios', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
