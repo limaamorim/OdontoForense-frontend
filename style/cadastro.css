@@ -1,0 +1,56 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+.sidebar {
+    height: 100vh;
+    background-color: #000000;
+    color: white;
+    position: fixed;
+    padding-top: 20px;
+}
+.sidebar a {
+    color: #0d6efd(255, 255, 255, 0.8);
+    padding: 10px 15px;
+    display: block;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.sidebar a:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.sidebar a.active {
+    color: 0d6efd;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+.panel-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+.case-card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    border-left: 4px solid #dc3545;
+}
+.evidence-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.evidence-item:last-child {
+    border-bottom: none;
+}
+.form-check-input:checked + .form-check-label {
+    text-decoration: line-through;
+    color: #6c757d;
+}

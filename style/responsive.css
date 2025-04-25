@@ -1,0 +1,197 @@
+/* Estilos gerais responsivos */
+@media (max-width: 768px) {
+    /* Layout principal */
+    .d-flex {
+        flex-direction: column;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        padding: 10px 0;
+    }
+    
+    .sidebar h4 {
+        font-size: 1.2rem;
+        margin-bottom: 10px !important;
+    }
+    
+    .sidebar ul.nav {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+    
+    .sidebar .nav-item {
+        width: 45%;
+        margin-bottom: 5px;
+    }
+    
+    .sidebar .nav-link {
+        padding: 8px 10px !important;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+    
+    .sidebar .nav-link i {
+        display: block;
+        margin: 0 auto 5px;
+    }
+    
+    /* Conteúdo principal */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 15px !important;
+    }
+    
+    .main-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Dashboard */
+    .card-counter {
+        padding: 15px 10px;
+        margin: 5px;
+    }
+    
+    .card-counter h1 {
+        font-size: 2rem !important;
+    }
+    
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+    
+    .col-md-6 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    
+    /* Formulários */
+    .form-section {
+        padding: 15px !important;
+    }
+    
+    .form-select, .form-control {
+        font-size: 0.9rem;
+    }
+    
+    /* Área de upload */
+    .upload-area {
+        padding: 20px 10px !important;
+    }
+    
+    /* Cards de casos */
+    .case-card {
+        padding: 10px !important;
+    }
+    
+    /* Tabs */
+    .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    /* Botões */
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    /* Relatórios */
+    .report-section {
+        padding: 15px !important;
+    }
+    
+    /* Login */
+    .login-container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+    
+    .login-logo {
+        height: 150px !important;
+        margin-bottom: -30px !important;
+    }
+}
+
+/* Correções para telas muito pequenas (menos de 400px) */
+@media (max-width: 400px) {
+    .sidebar .nav-item {
+        width: 100%;
+    }
+    
+    .main-content {
+        padding: 10px !important;
+    }
+    
+    .form-section {
+        padding: 10px !important;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+}
+
+/* Adicionando viewport para mobile */
+@media (max-width: 576px) {
+    .container, .login-container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Melhorando a visualização de abas em mobile */
+    .nav-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+    
+    .nav-tabs .nav-item {
+        flex: 0 0 auto;
+    }
+    
+    /* Ajustando cards de evidências */
+    .card {
+        width: 100% !important;
+        margin-right: 0 !important;
+        margin-bottom: 10px;
+    }
+    
+    /* Ajustando o grid do dashboard */
+    .row {
+        display: block;
+    }
+    
+    .col-md-6 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+/* Correção para o menu ativo no mobile */
+@media (max-width: 768px) {
+    .sidebar a.active {
+        background-color: rgba(13, 110, 253, 0.2) !important;
+        color: #0d6efd !important;
+    }
+}
