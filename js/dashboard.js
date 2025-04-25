@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     console.log('Fazendo requisição para /api/casos...');
-    const response = await fetch('http://localhost:5000/api/casos', {
+    const response = await fetch('https://odontocrim-api.onrender.com/api/casos', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function carregarCasosRecentes(token) {
   try {
-    const response = await fetch('http://localhost:5000/api/casos/recentes', {
+    const response = await fetch('https://odontocrim-api.onrender.com/api/casos/recentes', {
       headers: {
         Authorization: `Bearer ${token}`
       }
