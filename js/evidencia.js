@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('descricao', descricaoInput.value);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/evidencias/casos/${selectedCasoId}/evidencias`, {
+      const response = await fetch(`https://odontocrim-api.onrender.com/api/evidencias/casos/${selectedCasoId}/evidencias`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
