@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   uploadArea.addEventListener('click', () => fileInput.click());
 
   // Carregar casos
-  fetch('http://localhost:5000/api/casos', {
+  fetch('https://odontoforense-backend.onrender.com/api/casos', {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(res => res.json())
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('descricao', descricaoInput.value);
 
     try {
-      const response = await fetch(`https://odontocrim-api.onrender.com/api/evidencias/casos/${selectedCasoId}/evidencias`, {
+      const response = await fetch(`https://odontoforense-backend.onrender.com/api/evidencias/casos/${selectedCasoId}/evidencias`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
