@@ -1,0 +1,84 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+  nav.menu-lateral {
+  width: 80px;
+  height: 100vh;
+  background-color: #202020;
+  padding: 40px 0 40px 1%;
+  box-shadow: 3px 0 0 #3624d6;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  transition: .5s;
+  z-index: 1000;
+}
+
+nav.menu-lateral.expandir {
+  width: 300px;
+}
+
+.btn-expandir {
+  width: 100%;
+  padding-left: 10px;
+}
+
+.btn-expandir > i {
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+ul {
+  height: 100%;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li.item-menu {
+  transition: .2s;
+}
+
+ul li.ativo {
+  background-color: #3624d6;
+}
+
+ul li.item-menu:hover {
+  background: #3624d6;
+}
+
+ul li.item-menu a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 15px 4%;
+  display: flex;
+  margin-bottom: 20px;
+  line-height: 40px;
+}
+
+ul li.item-menu a .txt-link {
+  margin-left: 70px;
+  transition: .5s;
+  opacity: 0;
+}
+
+nav.menu-lateral.expandir .txt-link {
+  margin-left: 40px;
+  opacity: 1;
+}
+
+ul li.item-menu a .icon > i {
+  font-size: 30px;
+  margin-left: 10px;
+}
+main {
+  margin-left: 80px;
+  transition: margin-left 0.5s;
+}
+
+.menu-lateral.expandir ~ main {
+  margin-left: 300px;
+}
+
