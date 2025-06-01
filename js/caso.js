@@ -4,25 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   carregarCasosRecentes(token);
 
+  // Adicionar evento para botão de adicionar vítima
+  document.getElementById('btnAdicionarVitima')?.addEventListener('click', adicionarVitimaForm);
+
   const form = document.getElementById('formCaso');
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const numeroCaso = document.getElementById('numeroCaso').value;
-      const titulo = document.getElementById('titulo').value;
-      const descricao = document.getElementById('descricao').value;
-      const dataOcorrido = document.getElementById('dataOcorrido').value;
-      const local = document.getElementById('local').value;
-      const status = document.getElementById('status').value;
+      // Coletar dados das vítimas
+      const vitimasForms = document.querySelectorAll('.vitima-form');
+      const vitimas = Array.from(vitimasForms).map(form => ({
+        nic: form.querySelector('.vitima-nic').value,
+        nome: form.querySelector('.vitima-nome').value,
+        genero: form.querySelector('.vitima-genero').value,
+        idade: parseInt(form.querySelector('.vitima-idade').value) || undefined,
+        corEtnia: form.querySelector('.vitima-corEtnia').value
+      }));
 
       const payload = {
-        numeroCaso,
-        titulo,
-        descricao,
-        dataOcorrido,
-        local,
-        status
+        numeroCaso: document.getElementById('numeroCaso').value,
+        titulo: document.getElementById('titulo').value,
+        descricao: document.getElementById('descricao').value,
+        dataOcorrido: document.getElementById('dataOcorrido').value,
+        local: document.getElementById('local').value,
+        status: document.getElementById('status').value,
+        vitimas: Array.from(document.querySelectorAll('.vitima-form')).map(form => ({
+          nic: form.querySelector('.vitima-nic').value,
+          nome: form.querySelector('.vitima-nome').value,
+          genero: form.querySelector('.vitima-genero').value,
+          idade: parseInt(form.querySelector('.vitima-idade').value) || undefined,
+          corEtnia: form.querySelector('.vitima-corEtnia').value
+        }))
       };
 
       try {
@@ -40,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
           alert('Caso criado com sucesso!');
           form.reset();
+          document.getElementById('vitimasContainer').innerHTML = '';
           window.location.href = 'dashboard.html';
         } else {
           alert(data.error || 'Erro ao criar caso');
@@ -92,6 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function adicionarVitimaForm() {
+  const template = document.getElementById('templateVitima');
+  const clone = template.content.cloneNode(true);
+  const container = document.getElementById('vitimasContainer');
+  
+  clone.querySelector('.btn-remover-vitima').addEventListener('click', function() {
+    this.closest('.vitima-form').remove();
+  });
+  
+  container.appendChild(clone);
+}
+
 async function carregarCasosRecentes(token) {
   const response = await fetch('https://odontoforense-backend.onrender.com/api/casos?limit=1000', {
     headers: { Authorization: `Bearer ${token}` }
@@ -128,6 +154,7 @@ async function carregarCasosRecentes(token) {
               <h6 class="text-muted small mb-1">Caso - ${caso.numeroCaso || 'Sem número'}</h6>
               <h5 class="fw-semibold mb-2">${caso.titulo || 'Sem título'}</h5>
               <span class="badge ${statusClasse} px-3 py-2 text-uppercase small">${caso.status || 'Aberto'}</span>
+              ${caso.vitimas?.length ? `<div class="mt-2"><small class="text-muted">Vítimas: ${caso.vitimas.length}</small></div>` : ''}
             </div>
             <div>
               <button class="btn btn-sm btn-outline-secondary" onclick='abrirModalEdicao(${JSON.stringify(caso)})'>
