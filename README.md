@@ -85,7 +85,7 @@ file:///CAMINHO_DO_PROJETO/frontend/index.html
   - Cadastra evidências
 
 - **Assistente:**
-  - Acesso restrito, apenas leitura limitada
+  - Acesso restrito, apenas leitura limitada.
 
 ---
 
