@@ -1,5 +1,4 @@
-
- .case-status-open {
+.case-status-open {
   color: #198754;
 }
 
@@ -10,6 +9,7 @@
 .case-status-closed {
   color: #dc3545;
 } 
+
 /* Mantenha todas as regras do sidebar existentes */
 /* ... */
 
@@ -155,4 +155,37 @@
 .card .badge {
   font-size: 0.75rem;
   font-weight: 500;
+}
+
+/* Estilos para o formulário de vítimas */
+.vitima-form {
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.vitima-form:hover {
+  background-color: #e9ecef;
+}
+
+.btn-remover-vitima {
+  transition: all 0.2s ease;
+}
+
+.btn-remover-vitima:hover {
+  background-color: #dc3545;
+  color: white !important;
+}
+
+.vitima-form .form-control-sm, 
+.vitima-form .form-select-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+}
+
+.vitima-form .form-label.small {
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
 }
