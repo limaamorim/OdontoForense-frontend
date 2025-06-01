@@ -67,119 +67,164 @@
         </div>
       </div>
 
-      
       <!-- Casos Recentes -->
       <section class="recent-cases-section mt-5">
-        
         <div id="casos-recentes" class="recent-cases-container row g-3">
           Carregando casos...
         </div>
       </section>
 
       <!-- Modal para criar novo caso -->
-<div class="modal fade" id="modalNovoCaso" tabindex="-1" aria-labelledby="modalNovoCasoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <form id="formCaso">
-        <div class="modal-header bg-primary text-white rounded-top-4">
-          <h5 class="modal-title" id="modalNovoCasoLabel">📁 Novo Caso</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body px-4 py-4 bg-light">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Número do Caso</label>
-              <input type="text" class="form-control shadow-sm" id="numeroCaso" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Título</label>
-              <input type="text" class="form-control shadow-sm" id="titulo" required>
-            </div>
-            <div class="col-md-12">
-              <label class="form-label fw-semibold">Descrição</label>
-              <textarea class="form-control shadow-sm" id="descricao" rows="3" required></textarea>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Data do Ocorrido</label>
-              <input type="date" class="form-control shadow-sm" id="dataOcorrido" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Local</label>
-              <input type="text" class="form-control shadow-sm" id="local" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Status do Caso</label>
-              <select class="form-select shadow-sm" id="status" required>
-                <option value="Aberto" selected>Aberto</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Fechado">Fechado</option>
-              </select>
-            </div>
+      <div class="modal fade" id="modalNovoCaso" tabindex="-1" aria-labelledby="modalNovoCasoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <form id="formCaso">
+              <div class="modal-header bg-primary text-white rounded-top-4">
+                <h5 class="modal-title" id="modalNovoCasoLabel">📁 Novo Caso</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+              </div>
+              <div class="modal-body px-4 py-4 bg-light">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Número do Caso</label>
+                    <input type="text" class="form-control shadow-sm" id="numeroCaso" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Título</label>
+                    <input type="text" class="form-control shadow-sm" id="titulo" required>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label fw-semibold">Descrição</label>
+                    <textarea class="form-control shadow-sm" id="descricao" rows="3" required></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Data do Ocorrido</label>
+                    <input type="date" class="form-control shadow-sm" id="dataOcorrido" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Local</label>
+                    <input type="text" class="form-control shadow-sm" id="local" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Status do Caso</label>
+                    <select class="form-select shadow-sm" id="status" required>
+                      <option value="Aberto" selected>Aberto</option>
+                      <option value="Em andamento">Em andamento</option>
+                      <option value="Fechado">Fechado</option>
+                    </select>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label fw-semibold">Vítima(s)</label>
+                    <div id="vitimasContainer">
+                      <!-- Vítimas serão adicionadas aqui dinamicamente -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="btnAdicionarVitima">
+                      <i class="bi bi-plus-circle"></i> Adicionar Vítima
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer bg-white border-top-0 px-4 py-3">
+                <button type="submit" class="btn btn-primary px-4">
+                  <i class="bi bi-check-circle me-1"></i> Criar
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        <div class="modal-footer bg-white border-top-0 px-4 py-3">
-          <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-check-circle me-1"></i> Criar
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- Modal de Edição de Caso -->
-<div class="modal fade" id="modalEditarCaso" tabindex="-1" aria-labelledby="modalEditarCasoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <form id="formEditarCaso">
-        <div class="modal-header bg-warning text-dark rounded-top-4">
-          <h5 class="modal-title" id="modalEditarCasoLabel"><i class="bi bi-pencil-square me-2"></i> Editar Caso</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body px-4 py-4 bg-light">
-          <input type="hidden" id="editarCasoId">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Número do Caso</label>
-              <input type="text" class="form-control" id="editarNumeroCaso" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Título</label>
-              <input type="text" class="form-control" id="editarTitulo" required>
-            </div>
-            <div class="col-md-12">
-              <label class="form-label fw-semibold">Descrição</label>
-              <textarea class="form-control" id="editarDescricao" rows="3" required></textarea>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Data do Ocorrido</label>
-              <input type="date" class="form-control" id="editarDataOcorrido" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Local</label>
-              <input type="text" class="form-control" id="editarLocal" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Status</label>
-              <select class="form-select" id="editarStatus" required>
-                <option value="Aberto">Aberto</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Fechado">Fechado</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer bg-white px-4 py-3 border-top-0">
-          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+      </div>
 
+      <!-- Modal de Edição de Caso -->
+      <div class="modal fade" id="modalEditarCaso" tabindex="-1" aria-labelledby="modalEditarCasoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <form id="formEditarCaso">
+              <div class="modal-header bg-warning text-dark rounded-top-4">
+                <h5 class="modal-title" id="modalEditarCasoLabel"><i class="bi bi-pencil-square me-2"></i> Editar Caso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+              </div>
+              <div class="modal-body px-4 py-4 bg-light">
+                <input type="hidden" id="editarCasoId">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Número do Caso</label>
+                    <input type="text" class="form-control" id="editarNumeroCaso" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Título</label>
+                    <input type="text" class="form-control" id="editarTitulo" required>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label fw-semibold">Descrição</label>
+                    <textarea class="form-control" id="editarDescricao" rows="3" required></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Data do Ocorrido</label>
+                    <input type="date" class="form-control" id="editarDataOcorrido" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Local</label>
+                    <input type="text" class="form-control" id="editarLocal" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select class="form-select" id="editarStatus" required>
+                      <option value="Aberto">Aberto</option>
+                      <option value="Em andamento">Em andamento</option>
+                      <option value="Fechado">Fechado</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer bg-white px-4 py-3 border-top-0">
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Template para formulário de vítima -->
+      <template id="templateVitima">
+        <div class="vitima-form mb-3 p-3 border rounded">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <label class="form-label small">NIC</label>
+              <input type="text" class="form-control form-control-sm vitima-nic" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Nome</label>
+              <input type="text" class="form-control form-control-sm vitima-nome">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small">Gênero</label>
+              <select class="form-select form-select-sm vitima-genero" required>
+                <option value="não informado">Não informado</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small">Idade</label>
+              <input type="number" class="form-control form-control-sm vitima-idade" min="0">
+            </div>
+            <div class="col-md-5">
+              <label class="form-label small">Cor/Etnia</label>
+              <input type="text" class="form-control form-control-sm vitima-corEtnia">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button type="button" class="btn btn-sm btn-outline-danger btn-remover-vitima">
+                <i class="bi bi-trash"></i> Remover
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
     </main>
   </div>
 
