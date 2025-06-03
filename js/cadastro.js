@@ -30,29 +30,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const senha = senhaInput.value.trim();
     const tipo = tipoInput.value;
 
+    // Criação ou atualização dependendo se existe ID de edição
+    const id = formCadastro.dataset.editando;
+    const payload = { nome, email, senha, tipo };
+
     try {
-      const response = await fetch('https://odontoforense-backend.onrender.com/api/usuarios', {
-        method: 'POST',
+      const url = id
+        ? `https://odontoforense-backend.onrender.com/api/usuarios/${id}`
+        : 'https://odontoforense-backend.onrender.com/api/usuarios';
+
+      const method = id ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ nome, email, senha, tipo })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || 'Erro ao cadastrar usuário');
+        alert(data.error || 'Erro ao salvar usuário');
         return;
       }
 
-      alert('Usuário cadastrado com sucesso!');
+      alert(id ? 'Usuário atualizado com sucesso!' : 'Usuário cadastrado com sucesso!');
+      bootstrap.Modal.getInstance(document.getElementById('modalNovoUsuario')).hide();
+      formCadastro.dataset.editando = '';
       formCadastro.reset();
       if (isAdmin) carregarUsuarios();
     } catch (err) {
-      console.error('Erro ao cadastrar:', err);
-      alert('Erro inesperado ao cadastrar');
+      console.error('Erro ao salvar usuário:', err);
+      alert('Erro inesperado');
     }
   });
 
@@ -72,11 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       tbody.innerHTML = '';
       dados.data.forEach(usuario => {
-        const tr = document.createElement('tr');
-        const tipoBadge = usuario.tipo === 'administrador'
-          ? '<span class="badge bg-primary">Administrador</span>'
-          : '<span class="badge bg-success">Perito</span>';
+        let tipoBadge = '';
+        switch (usuario.tipo) {
+          case 'administrador':
+            tipoBadge = '<span class="badge bg-primary">Administrador</span>';
+            break;
+          case 'perito':
+            tipoBadge = '<span class="badge bg-success">Perito</span>';
+            break;
+          case 'assistente':
+            tipoBadge = '<span class="badge bg-purple">Assistente</span>';
+            break;
+          default:
+            tipoBadge = `<span class="badge bg-secondary">${usuario.tipo}</span>`;
+        }
 
+        const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${usuario.nome}</td>
           <td>${usuario.email}</td>
@@ -105,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cardUsuarios) cardUsuarios.style.display = 'none';
   }
 
-  // Adiciona escuta ao formulário de edição (mesmo formulário reutilizado)
   window.editarUsuario = (id, nome, email, tipo) => {
     document.getElementById('modalNovoUsuarioLabel').innerHTML = '✏️ Editar Usuário';
     formCadastro.dataset.editando = id;
@@ -136,43 +158,4 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Erro inesperado');
     }
   };
-
-  // Ao enviar o formulário, se estiver em modo edição:
-  formCadastro.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = formCadastro.dataset.editando;
-    if (!id) return; // já tratado acima como criação
-
-    const payload = {
-      nome: nomeInput.value.trim(),
-      email: emailInput.value.trim(),
-      senha: senhaInput.value.trim(),
-      tipo: tipoInput.value
-    };
-
-    try {
-      const res = await fetch(`https://odontoforense-backend.onrender.com/api/usuarios/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert('Usuário atualizado com sucesso!');
-        bootstrap.Modal.getInstance(document.getElementById('modalNovoUsuario')).hide();
-        formCadastro.dataset.editando = '';
-        formCadastro.reset();
-        carregarUsuarios();
-      } else {
-        alert(data.error || 'Erro ao atualizar');
-      }
-    } catch (err) {
-      console.error('Erro ao atualizar:', err);
-      alert('Erro inesperado');
-    }
-  });
 });
