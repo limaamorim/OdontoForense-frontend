@@ -100,6 +100,20 @@
           </div>
         </div>
       </div>
+        
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <label for="dataInicio" class="form-label">Data Início</label>
+          <input type="date" id="dataInicio" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label for="dataFim" class="form-label">Data Fim</label>
+          <input type="date" id="dataFim" class="form-control" />
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" id="btnFiltrar">Filtrar</button>
+        </div>
+      </div>
 
         
         <!-- Substitua a seção dos gráficos por: -->
@@ -118,7 +132,7 @@
           <div class="col-md-6">
             <div class="card shadow-sm h-100">
               <div class="card-header bg-primary text-white">
-                <i class="bi bi-graph-up me-2"></i>Casos por Mês
+                <i class="bi bi-graph-up me-2"></i>Casos Registrados por Dia
               </div>
               <div class="card-body">
                 <canvas id="graficoCasosPorMes" height="250"></canvas>
