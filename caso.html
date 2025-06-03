@@ -114,13 +114,22 @@
                     </select>
                   </div>
                   <div class="col-md-12">
-                    <label class="form-label fw-semibold">Vítima(s)</label>
-                    <div id="vitimasContainer">
-                      <!-- Vítimas serão adicionadas aqui dinamicamente -->
+                    <div class="vitimas-header">
+                      <h3 class="vitimas-title">
+                        <span class="vitima-counter" id="vitimaCounter">0</span>
+                        Vítima(s)
+                      </h3>
+                      <button type="button" class="btn btn-sm btn-primary btn-adicionar-vitima" id="btnAdicionarVitima">
+                        <i class="bi bi-plus-lg"></i> Adicionar Vítima
+                      </button>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="btnAdicionarVitima">
-                      <i class="bi bi-plus-circle"></i> Adicionar Vítima
-                    </button>
+                    <div id="vitimasContainer" class="mb-3">
+                      <!-- Vítimas serão adicionadas aqui dinamicamente -->
+                      <div class="text-muted text-center py-3" id="nenhumaVitimaMsg">
+                        <i class="bi bi-person-x fs-4"></i>
+                        <p class="mt-2 mb-0">Nenhuma vítima adicionada</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -190,37 +199,40 @@
 
       <!-- Template para formulário de vítima -->
       <template id="templateVitima">
-        <div class="vitima-form mb-3 p-3 border rounded">
-          <div class="row g-2">
-            <div class="col-md-4">
-              <label class="form-label small">NIC</label>
+        <div class="vitima-card">
+          <div class="vitima-card-header">
+            <h4 class="vitima-card-title">
+              <i class="bi bi-person-vcard"></i>
+              Vítima <span class="vitima-numero"></span>
+            </h4>
+            <button type="button" class="btn-remover-vitima">
+              <i class="bi bi-trash"></i> Remover
+            </button>
+          </div>
+          <div class="vitima-card-body">
+            <div>
+              <label class="form-label small">Nic</label>
               <input type="text" class="form-control form-control-sm vitima-nic" required>
             </div>
-            <div class="col-md-4">
+            <div>
               <label class="form-label small">Nome</label>
               <input type="text" class="form-control form-control-sm vitima-nome">
             </div>
-            <div class="col-md-4">
+            <div>
               <label class="form-label small">Gênero</label>
               <select class="form-select form-select-sm vitima-genero" required>
-                <option value="não informado">Não informado</option>
                 <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
                 <option value="outro">Outro</option>
               </select>
             </div>
-            <div class="col-md-3">
+            <div>
               <label class="form-label small">Idade</label>
               <input type="number" class="form-control form-control-sm vitima-idade" min="0">
             </div>
-            <div class="col-md-5">
-              <label class="form-label small">Cor/Etnia</label>
+            <div>
+              <label class="form-label small">Cor</label>
               <input type="text" class="form-control form-control-sm vitima-corEtnia">
-            </div>
-            <div class="col-md-4 d-flex align-items-end">
-              <button type="button" class="btn btn-sm btn-outline-danger btn-remover-vitima">
-                <i class="bi bi-trash"></i> Remover
-              </button>
             </div>
           </div>
         </div>
