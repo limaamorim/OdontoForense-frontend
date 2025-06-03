@@ -189,3 +189,118 @@
   font-size: 0.8rem;
   margin-bottom: 0.2rem;
 }
+/* Estilos melhorados para o formulário de vítimas */
+.vitimas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.vitimas-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.vitima-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.vitima-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.vitima-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.vitima-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3498db;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vitima-card-title i {
+  font-size: 1.1rem;
+}
+
+.vitima-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.btn-remover-vitima {
+  background-color: transparent;
+  border: none;
+  color: #dc3545;
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-remover-vitima:hover {
+  background-color: #f8d7da;
+  color: #dc3545 !important;
+}
+
+.btn-adicionar-vitima {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-adicionar-vitima:hover {
+  background-color: #e8f4fd;
+}
+
+.vitima-counter {
+  background-color: #3498db;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  margin-right: 8px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .vitima-card-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .vitima-card {
+    padding: 15px;
+  }
+}
