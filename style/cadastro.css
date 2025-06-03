@@ -107,3 +107,7 @@
 .btn-sm i {
   vertical-align: middle;
 }
+.bg-purple {
+  background-color: #6f42c1 !important; /* tom roxo */
+  color: #fff !important;
+}
