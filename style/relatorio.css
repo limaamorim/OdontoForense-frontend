@@ -68,4 +68,73 @@
   select.form-select {
     max-width: 400px;
   }
-  
+  .tab-content {
+  background-color: #fff;
+  border-radius: 0 0 10px 10px;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  border-top: none;
+}
+
+.nav-tabs .nav-link {
+  font-weight: 500;
+  color: #495057;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd;
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.report-section {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.report-header {
+  border-bottom: 2px solid #e1e5eb;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.report-header h4 {
+  margin: 0;
+  color: #0d6efd;
+}
+
+.document-content {
+  line-height: 1.6;
+}
+
+.document-content h5 {
+  color: #0d6efd;
+  margin-top: 20px;
+}
+
+.document-content p {
+  margin-bottom: 10px;
+}
+
+.document-content ul {
+  padding-left: 20px;
+}
+
+#statusGeracao .spinner-border {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 8px;
+}
+
+.btn-generate {
+  position: relative;
+}
+
+.btn-generate .spinner-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
