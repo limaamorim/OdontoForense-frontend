@@ -304,3 +304,153 @@
     padding: 15px;
   }
 }
+#detalhesCaso {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+}
+
+#detalhesCaso h5 {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+#detalhesCaso p {
+  font-size: 0.95rem;
+  color: #34495e;
+  margin-bottom: 8px;
+}
+
+#detalhesCaso hr {
+  margin: 25px 0;
+  border-top: 1px solid #ddd;
+}
+
+#detalhesCaso .mb-3.p-3.border {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+/* Estilos melhorados para o modal de visualização */
+#detalhesCaso {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+#detalhesCaso h5 {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#detalhesCaso .case-detail-section {
+  margin-bottom: 25px;
+}
+
+#detalhesCaso .detail-title {
+  font-weight: 600;
+  color: #3498db;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#detalhesCaso .detail-title i {
+  font-size: 1.2rem;
+}
+
+#detalhesCaso .detail-content {
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #eef2f6;
+}
+
+#detalhesCaso .detail-item {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+#detalhesCaso .detail-label {
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 120px;
+}
+
+#detalhesCaso .detail-value {
+  color: #2d3748;
+  flex: 1;
+}
+
+#detalhesCaso hr {
+  margin: 30px 0;
+  border-top: 1px solid #e2e8f0;
+  opacity: 0.5;
+}
+
+/* Estilos para as vítimas */
+.victim-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.victim-card-header {
+  font-weight: 600;
+  color: #e53e3e;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Estilos para as evidências */
+
+
+
+
+.evidence-item img {
+  width: 300%;
+  height: auto;
+  max-height: 1000px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease;
+}
+
+
+.evidence-item:hover img {
+  transform: scale(1.05);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  #detalhesCaso {
+    padding: 20px;
+  }
+  
+  .evidence-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+  }
+  
+  .detail-label {
+    margin-bottom: 5px;
+  }
+}
