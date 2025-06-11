@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarCasosRecentes(token);
   atualizarContadorVitimas();
 
-  // Delegar evento para remover vítimas
   document.getElementById('vitimasContainer')?.addEventListener('click', function(e) {
     if (e.target.closest('.btn-remover-vitima')) {
       e.target.closest('.vitima-card').remove();
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Adicionar evento para botão de adicionar vítima
   document.getElementById('btnAdicionarVitima')?.addEventListener('click', function() {
     const template = document.getElementById('templateVitima');
     const clone = template.content.cloneNode(true);
@@ -88,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const id = document.getElementById('editarCasoId').value;
       const btnSubmit = formEditar.querySelector('button[type="submit"]');
-      
+
       btnSubmit.disabled = true;
       btnSubmit.classList.add('loading');
 
@@ -130,19 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Função para atualizar o contador de vítimas
 function atualizarContadorVitimas() {
   const vitimas = document.querySelectorAll('.vitima-card');
   const counter = document.getElementById('vitimaCounter');
   const nenhumaVitimaMsg = document.getElementById('nenhumaVitimaMsg');
-  
+
   if (counter) counter.textContent = vitimas.length;
-  
+
   if (nenhumaVitimaMsg) {
     nenhumaVitimaMsg.style.display = vitimas.length > 0 ? 'none' : 'block';
   }
-  
-  // Atualizar números das vítimas
+
   vitimas.forEach((vitima, index) => {
     const numeroElement = vitima.querySelector('.vitima-numero');
     if (numeroElement) numeroElement.textContent = index + 1;
@@ -198,7 +194,10 @@ async function carregarCasosRecentes(token) {
                   </div>
                 ` : ''}
               </div>
-              <div>
+              <div class="text-end">
+                <button class="btn btn-sm btn-outline-primary mb-2" onclick='visualizarCaso(${JSON.stringify(caso)})'>
+                  <i class="bi bi-eye-fill"></i>
+                </button><br>
                 <button class="btn btn-sm btn-outline-secondary" onclick='abrirModalEdicao(${JSON.stringify(caso)})'>
                   <i class="bi bi-pencil-square"></i>
                 </button>
@@ -262,4 +261,116 @@ async function deletarCaso(id) {
     console.error('Erro ao deletar caso:', err);
     alert(err.message || 'Erro inesperado ao deletar caso');
   }
+}
+
+document.getElementById('inputBuscaCaso')?.addEventListener('input', function (e) {
+  const termo = e.target.value.toLowerCase();
+  const cards = document.querySelectorAll('#casos-recentes .card');
+
+  cards.forEach(card => {
+    const texto = card.innerText.toLowerCase();
+    card.parentElement.style.display = texto.includes(termo) ? '' : 'none';
+  });
+});
+
+async function visualizarCaso(caso) {
+  const container = document.getElementById('detalhesCaso');
+  const token = localStorage.getItem('token');
+
+  const statusMap = {
+    'aberto': 'case-status-open',
+    'em andamento': 'case-status-progress',
+    'fechado': 'case-status-closed'
+  };
+  const statusClass = statusMap[caso.status?.toLowerCase()] || 'case-status-open';
+
+  const dataFormatada = caso.dataOcorrido ?
+    new Date(caso.dataOcorrido).toLocaleDateString('pt-BR', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    }) : 'Não informada';
+
+  // Buscar vítimas do caso
+  let vitimas = [];
+  try {
+    const resVitimas = await fetch(`https://odontoforense-backend.onrender.com/api/vitimas/casos/${caso._id}/vitimas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (resVitimas.ok) vitimas = await resVitimas.json();
+  } catch (err) {
+    console.error("Erro ao buscar vítimas:", err);
+  }
+
+  // Buscar evidências do caso
+  let evidencias = [];
+  try {
+    const resEvidencias = await fetch(`https://odontoforense-backend.onrender.com/api/evidencias?casoId=${caso._id}`);
+    if (resEvidencias.ok) evidencias = await resEvidencias.json();
+  } catch (err) {
+    console.error("Erro ao buscar evidências:", err);
+  }
+
+  // Gerar HTML das vítimas
+  const vitimasHtml = vitimas.length ? vitimas.map((v, i) => `
+    <div class="victim-card">
+      <div class="victim-card-header">
+        <i class="bi bi-person-vcard"></i>
+        Vítima ${i + 1}
+      </div>
+      <div class="detail-item"><span class="detail-label">NIC:</span><span class="detail-value">${v.nic || '-'}</span></div>
+      <div class="detail-item"><span class="detail-label">Nome:</span><span class="detail-value">${v.nome || '-'}</span></div>
+      <div class="detail-item"><span class="detail-label">Gênero:</span><span class="detail-value">${v.genero || '-'}</span></div>
+      <div class="detail-item"><span class="detail-label">Idade:</span><span class="detail-value">${v.idade || '-'}</span></div>
+      <div class="detail-item"><span class="detail-label">Cor/Etnia:</span><span class="detail-value">${v.corEtnia || '-'}</span></div>
+    </div>
+  `).join('') : `
+    <div class="text-center py-4 text-muted">
+      <i class="bi bi-person-x fs-2"></i>
+      <p class="mt-2 mb-0">Nenhuma vítima cadastrada</p>
+    </div>`;
+
+  // Gerar HTML das evidências
+const evidenciasHtml = evidencias.length ? evidencias.map(e => `
+  <div class="evidence-item col-md-3 mb-3">
+'    <a href="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" target="_blank">
+  <img src="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" 
+       class="img-fluid border rounded shadow-sm w-100"  
+       alt="${e.nome}">
+</a>
+'
+    <div class="evidence-caption small text-muted mt-1 text-center">${e.nome || 'Sem nome'}</div>
+  </div>
+`).join('') : `<p class="text-muted">Nenhuma evidência registrada</p>`;
+
+
+  // Definir conteúdo do modal
+  container.innerHTML = `
+    <h5><i class="bi bi-folder-fill"></i> ${caso.titulo || 'Sem título'} <span class="badge ${statusClass} ms-2">${caso.status || 'Aberto'}</span></h5>
+
+    <div class="case-detail-section">
+      <div class="detail-title"><i class="bi bi-info-circle"></i> Informações do Caso</div>
+      <div class="detail-content">
+        <div class="detail-item"><span class="detail-label">Número:</span><span class="detail-value">${caso.numeroCaso || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">Status:</span><span class="detail-value">${caso.status || 'Aberto'}</span></div>
+        <div class="detail-item"><span class="detail-label">Local:</span><span class="detail-value">${caso.local || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">Data:</span><span class="detail-value">${dataFormatada}</span></div>
+        <div class="detail-item"><span class="detail-label">Descrição:</span><span class="detail-value">${caso.descricao || 'Nenhuma descrição fornecida'}</span></div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="case-detail-section">
+      <div class="detail-title"><i class="bi bi-people-fill"></i> Vítimas</div>
+      <div>${vitimasHtml}</div>
+    </div>
+
+    <hr>
+
+    <div class="case-detail-section">
+      <div class="detail-title"><i class="bi bi-camera-fill"></i> Evidências</div>
+      <div class="evidence-grid row">${evidenciasHtml}</div>
+    </div>
+  `;
+
+  new bootstrap.Modal(document.getElementById('modalVisualizarCaso')).show();
 }
