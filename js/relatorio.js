@@ -1,239 +1,170 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const { jsPDF } = window.jspdf;
   const token = localStorage.getItem('token');
-  if (!token) window.location.href = 'index.html';
+  if (!token) return window.location.href = 'index.html';
 
-  // Elementos da UI
-  const elements = {
-    casoSelect: document.getElementById('casoSelect'),
-    tipoDocumento: document.getElementById('tipoDocumento'),
-    btnGerarDocumento: document.getElementById('btnGerarDocumento'),
-    btnVisualizarRelatorio: document.getElementById('btnVisualizarRelatorio'),
-    btnVisualizarLaudo: document.getElementById('btnVisualizarLaudo'),
-    btnDownloadRelatorio: document.getElementById('btnDownloadRelatorio'),
-    btnDownloadLaudo: document.getElementById('btnDownloadLaudo'),
-    conteudoRelatorio: document.getElementById('conteudoRelatorio'),
-    conteudoLaudo: document.getElementById('conteudoLaudo'),
-    statusGeracao: document.getElementById('statusGeracao'),
-    loadingModal: new bootstrap.Modal('#loadingModal'),
-    loadingMessage: document.getElementById('loadingMessage')
-  };
+  const casoSelect = document.getElementById('casoSelect');
+  const btnVerRelatorio = document.getElementById('btnVerRelatorio');
+  const relatorioContainer = document.getElementById('relatorioContainer');
+  const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+
+  const laudoNumero = document.getElementById('laudoNumero');
+  const laudoPerito = document.getElementById('laudoPerito');
+  const laudoLocal = document.getElementById('laudoLocal');
+  const laudoDataEmissao = document.getElementById('laudoDataEmissao');
+  const tituloCaso = document.getElementById('tituloCaso');
+  const dataOcorrido = document.getElementById('dataOcorrido');
+  const statusCasos = document.querySelectorAll('.statusCaso');
 
   let casoAtual = null;
-  let documentosGerados = {
-    relatorio: null,
-    laudo: null
-  };
 
-  // Carregar casos
-  async function carregarCasos() {
-    try {
-      const response = await fetch('https://odontoforense-backend.onrender.com/api/casos', {
-        headers: { Authorization: `Bearer ${token}` }
+  // Corrigido: falta de aspas na URL
+  fetch('http://localhost:5000/api/casos', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      (data.data.docs || data.data).forEach(caso => {
+        const opt = document.createElement('option');
+        opt.value = caso._id;
+        opt.textContent = `${caso.numeroCaso} - ${caso.titulo}`;
+        casoSelect.appendChild(opt);
       });
-      
-      if (!response.ok) throw new Error('Erro ao carregar casos');
-      
-      const data = await response.json();
-      const casos = data.data.docs || data.data;
-      
-      casos.forEach(caso => {
-        const option = document.createElement('option');
-        option.value = caso._id;
-        option.textContent = `${caso.numeroCaso || 'Caso'} - ${caso.titulo}`;
-        elements.casoSelect.appendChild(option);
-      });
-    } catch (error) {
-      console.error('Erro ao carregar casos:', error);
-      mostrarAlerta('Erro ao carregar lista de casos', 'danger');
-    }
-  }
+    })
+    .catch(err => {
+      console.error('Erro ao carregar casos:', err);
+      alert('Erro ao carregar lista de casos.');
+    });
 
-  // Gerar documento via IA
-  async function gerarDocumento() {
-    const casoId = elements.casoSelect.value;
-    const tipo = elements.tipoDocumento.value;
-    
-    if (!casoId) {
-      mostrarAlerta('Selecione um caso para continuar', 'warning');
-      return;
-    }
+  btnVerRelatorio.addEventListener('click', async () => {
+    const casoId = casoSelect.value;
+    if (!casoId) return alert('Selecione um caso');
 
-    elements.loadingMessage.textContent = tipo === 'ambos' 
-      ? 'Gerando relatório e laudo...' 
-      : `Gerando ${tipo === 'relatorio' ? 'relatório' : 'laudo'}...`;
-    elements.loadingModal.show();
+    relatorioContainer.style.display = 'none';
 
     try {
-      // 1. Buscar detalhes do caso
-      const resCaso = await fetch(`https://odontoforense-backend.onrender.com/api/casos/${casoId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const resCaso = await fetch(`http://localhost:5000/api/casos/${casoId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        }
       });
-      
-      if (!resCaso.ok) throw new Error('Erro ao buscar caso');
-      
+
+      if (resCaso.status === 403) {
+        alert('Você não tem permissão para visualizar este relatório.');
+        return;
+      }
+
       const { data: caso } = await resCaso.json();
       casoAtual = caso;
 
-      // 2. Gerar documentos conforme seleção
-      if (tipo === 'relatorio' || tipo === 'ambos') {
-        await gerarRelatorioIA(caso);
-      }
-      
-      if (tipo === 'laudo' || tipo === 'ambos') {
-        await gerarLaudoIA(caso);
-      }
+      laudoNumero.textContent = caso.numeroCaso;
+      laudoPerito.textContent = `Dr. ${caso.peritoResponsavel.nome}`;
+      laudoLocal.textContent = caso.local;
+      laudoDataEmissao.textContent = new Date().toLocaleDateString();
+      tituloCaso.textContent = caso.titulo;
+      dataOcorrido.textContent = new Date(caso.dataOcorrido).toLocaleDateString();
+      statusCasos.forEach(el => el.textContent = caso.status);
 
-      // 3. Atualizar UI
-      atualizarUI();
-      mostrarAlerta('Documento(s) gerado(s) com sucesso!', 'success');
+      relatorioContainer.style.display = 'block';
 
-    } catch (error) {
-      console.error('Erro ao gerar documento:', error);
-      mostrarAlerta(`Falha ao gerar documento: ${error.message}`, 'danger');
-    } finally {
-      elements.loadingModal.hide();
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao carregar relatório');
     }
-  }
-
-  // Gerar relatório por IA
-  async function gerarRelatorioIA(caso) {
-    try {
-      const response = await fetch('https://odontoforense-backend.onrender.com/api/relatorios/ia', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          casoId: caso._id,
-          responsavelId: getUserIdFromToken()
-        })
-      });
-
-      if (!response.ok) throw new Error('Erro na API de relatórios');
-
-      const { data: relatorio } = await response.json();
-      documentosGerados.relatorio = relatorio;
-      
-      // Exibir relatório
-      elements.conteudoRelatorio.innerHTML = formatarConteudo(relatorio.descricao);
-      elements.tituloRelatorio.textContent = relatorio.titulo;
-      
-    } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
-      throw error;
-    }
-  }
-
-  // Gerar laudo por IA
-  async function gerarLaudoIA(caso) {
-    try {
-      // Verificar se há evidências
-      if (!caso.evidencias || caso.evidencias.length === 0) {
-        throw new Error('O caso não possui evidências para gerar um laudo');
-      }
-
-      const response = await fetch('https://odontoforense-backend.onrender.com/api/laudos/ia', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          evidenciaId: caso.evidencias[0]._id, // Pega a primeira evidência
-          tipoLaudo: 'odontologico' // Pode ser dinâmico
-        })
-      });
-
-      if (!response.ok) throw new Error('Erro na API de laudos');
-
-      const { data: laudo } = await response.json();
-      documentosGerados.laudo = laudo;
-      
-      // Exibir laudo
-      elements.conteudoLaudo.innerHTML = `
-        <div class="mb-3">${formatarConteudo(laudo.conteudo)}</div>
-        <div class="conclusao p-3 bg-light rounded">
-          <h5>Conclusão</h5>
-          <p>${laudo.conclusao}</p>
-        </div>
-      `;
-      elements.tituloLaudo.textContent = `Laudo Técnico - Caso ${caso.numeroCaso}`;
-      
-    } catch (error) {
-      console.error('Erro ao gerar laudo:', error);
-      throw error;
-    }
-  }
-
-  // Funções auxiliares
-  function getUserIdFromToken() {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.usuario.id;
-  }
-
-  function formatarConteudo(texto) {
-    // Transforma markdown simples em HTML
-    return texto
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/^# (.*$)/gm, '<h4>$1</h4>')
-      .replace(/^## (.*$)/gm, '<h5>$1</h5>')
-      .replace(/\n/g, '<br>');
-  }
-
-  function atualizarUI() {
-    const temRelatorio = documentosGerados.relatorio !== null;
-    const temLaudo = documentosGerados.laudo !== null;
-
-    elements.btnVisualizarRelatorio.disabled = !temRelatorio;
-    elements.btnVisualizarLaudo.disabled = !temLaudo;
-    elements.btnDownloadRelatorio.disabled = !temRelatorio;
-    elements.btnDownloadLaudo.disabled = !temLaudo;
-  }
-
-  function mostrarAlerta(mensagem, tipo) {
-    elements.statusGeracao.innerHTML = `
-      <div class="alert alert-${tipo} d-flex align-items-center">
-        ${mensagem}
-      </div>
-    `;
-    elements.statusGeracao.style.display = 'block';
-    setTimeout(() => elements.statusGeracao.style.display = 'none', 5000);
-  }
-
-  // Event Listeners
-  elements.btnGerarDocumento.addEventListener('click', gerarDocumento);
-  
-  elements.btnDownloadRelatorio.addEventListener('click', () => {
-    if (!documentosGerados.relatorio) return;
-    gerarPDF('relatorio');
-  });
-  
-  elements.btnDownloadLaudo.addEventListener('click', () => {
-    if (!documentosGerados.laudo) return;
-    gerarPDF('laudo');
   });
 
-  // Função para gerar PDF
-  function gerarPDF(tipo) {
-    const doc = new jsPDF();
-    const conteudo = tipo === 'relatorio' 
-      ? elementos.conteudoRelatorio.textContent 
-      : elementos.conteudoLaudo.textContent;
-    
+  async function getImageDataURL(url) {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => reject('Erro ao ler imagem');
+        reader.readAsDataURL(blob);
+      });
+    } catch (err) {
+      console.error('Erro ao buscar imagem:', err);
+      return null;
+    }
+  }
+
+  btnDownloadPdf.addEventListener('click', async () => {
+    if (!casoAtual) return alert('Nenhum caso carregado');
+
+    const doc = new window.jspdf.jsPDF();
     doc.setFontSize(16);
-    doc.text(tipo === 'relatorio' ? 'RELATÓRIO FORENSE' : 'LAUDO TÉCNICO', 105, 20, null, null, 'center');
-    doc.line(20, 25, 190, 25);
-    
-    doc.setFontSize(12);
-    const lines = doc.splitTextToSize(conteudo, 170);
-    doc.text(lines, 20, 40);
-    
-    doc.save(`${tipo}_caso_${casoAtual.numeroCaso}.pdf`);
-  }
+    doc.text('LAUDO PERICIAL - ODONTOCRIM', 105, 20, null, null, 'center');
+    doc.line(15, 25, 195, 25);
 
-  // Inicialização
-  carregarCasos();
+    let y = 35;
+
+    const addLine = (label, value) => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(`${label}:`, 20, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(value, 70, y);
+      y += 8;
+    };
+
+    addLine('Título', casoAtual.titulo);
+    addLine('Número do Caso', casoAtual.numeroCaso);
+    addLine('Perito Responsável', casoAtual.peritoResponsavel.nome);
+    addLine('Local', casoAtual.local);
+    addLine('Data do Ocorrido', new Date(casoAtual.dataOcorrido).toLocaleDateString());
+    addLine('Data da Emissão', new Date().toLocaleDateString());
+    addLine('Status', casoAtual.status);
+
+    y += 5;
+    doc.setFontSize(13);
+    doc.text('Descrição do Caso:', 20, y);
+    y += 7;
+
+    doc.setFontSize(11);
+    const splitDescricao = doc.splitTextToSize(casoAtual.descricao || '', 170);
+    doc.text(splitDescricao, 20, y);
+    y += splitDescricao.length * 7 + 5;
+
+    if (casoAtual.evidencias?.length) {
+      doc.setFontSize(13);
+      doc.text('Evidências:', 20, y);
+      y += 8;
+
+      for (const evidencia of casoAtual.evidencias) {
+        doc.setFontSize(11);
+        doc.text(`Tipo: ${evidencia.tipo}`, 20, y);
+        y += 6;
+
+        if (evidencia.descricao) {
+          const splitDesc = doc.splitTextToSize(`Descrição: ${evidencia.descricao}`, 170);
+          doc.text(splitDesc, 20, y);
+          y += splitDesc.length * 6;
+        }
+
+        const imgUrl = `http://localhost:5000/${evidencia.caminhoArquivo}`;
+        console.log('Baixando imagem:', imgUrl);
+
+        let imgData = await getImageDataURL(imgUrl);
+
+        if (y + 60 > 280) {
+          doc.addPage();
+          y = 20;
+        }
+
+        if (imgData) {
+          doc.addImage(imgData, 'PNG', 20, y, 60, 50);
+          y += 60;
+        } else {
+          doc.setFontSize(10);
+          doc.text('Imagem não carregada.', 20, y);
+          y += 10;
+        }
+
+        y += 10;
+      }
+    }
+
+    doc.save(`Laudo_Caso_${casoAtual.numeroCaso}.pdf`);
+  });
 });
