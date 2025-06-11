@@ -54,7 +54,10 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Casos</h2>
         <div class="d-flex align-items-center gap-3">
+          <input type="text" id="inputBuscaCaso" class="form-control shadow-sm" placeholder="🔍 Buscar casos..." style="max-width: 300px;">
+
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovoCaso"><i class="bi bi-plus-lg"></i> Novo Caso</button>
+          
           <div class="dropdown">
             <i class="bi bi-person-circle fs-3 dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" role="button"></i>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -196,6 +199,22 @@
           </div>
         </div>
       </div>
+      <!-- Modal de Visualização de Caso -->
+      <div class="modal fade" id="modalVisualizarCaso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-info text-white rounded-top-4">
+              <h5 class="modal-title">🔍 Detalhes do Caso</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body bg-light p-4">
+              <div id="detalhesCaso">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- Template para formulário de vítima -->
       <template id="templateVitima">
@@ -228,7 +247,7 @@
             </div>
             <div>
               <label class="form-label small">Idade</label>
-              <input type="number" class="form-control form-control-sm vitima-idade" min="0">
+              <input type="text" class="form-control form-control-sm vitima-idade" min="0">
             </div>
             <div>
               <label class="form-label small">Cor</label>
