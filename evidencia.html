@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="style/evidencia.css">
   <link rel="stylesheet" href="style/theme.css">
+  <link rel="stylesheet" href="style/menu.css">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -58,10 +59,11 @@
     <div class="d-flex align-items-center">
       <i class="bi bi-folder2-open fs-2 text-primary me-3"></i>
       <div>
-        <h2 class="mb-0">Casos Disponíveis</h2>
+        <h2 class="mb-0">Evidências</h2>
         <small class="text-muted">Clique em um caso para adicionar evidências</small>
       </div>
     </div>
+    <input type="text" id="inputBuscaEvidencia" class="form-control shadow-sm" placeholder="🔍 Buscar caso..." style="max-width: 280px;">
   </div>
 
   <div id="listaCasos" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
@@ -78,11 +80,18 @@
         </div>
         <div class="modal-body bg-light px-4 py-4">
           <input type="hidden" id="casoSelecionadoId" />
+            <div class="form-floating mb-3">
+              <select class="form-select" id="tipoEvidencia" required>
+                <option value="">Selecione o tipo</option>
+                <option value="foto">Foto</option>
+                <option value="documento">Documento</option>
+                <option value="radiografia">Radiografia</option>
+                <option value="modelo_dental">Modelo Dental</option>
+                <option value="outros">Outros</option>
+              </select>
+              <label for="tipoEvidencia">Tipo da Evidência</label>
+            </div>
 
-          <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="tipoEvidencia" placeholder="Tipo da Evidência" required />
-            <label for="tipoEvidencia">Tipo da Evidência</label>
-          </div>
 
           <div class="form-floating mb-3">
             <textarea class="form-control" id="descricao" placeholder="Descrição" style="height: 100px" required></textarea>
