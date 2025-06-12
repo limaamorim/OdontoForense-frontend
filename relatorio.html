@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
+  <title>Gerar Documentos</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
   <link rel="stylesheet" href="style/theme.css" />
   <link rel="stylesheet" href="style/relatorio.css" />
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="d-flex">
@@ -37,7 +37,7 @@
         <span class="txt-link">Evidências</span>
       </a>
     </li>
-    <li class="item-menu ativo">
+    <li class="item-menu ativo  ">
       <a href="relatorio.html">
         <span class="icon"><i class="bi bi-file-earmark-text"></i></span>
         <span class="txt-link">Relatório</span>
@@ -53,72 +53,118 @@
 </nav>
 
     <main class="flex-grow-1 p-4 bg-light">
-      <div class="card shadow p-4">
-        <h2 class="mb-4">Gerar Relatório de Caso</h2>
-
-        <div class="mb-3">
-          <label for="casoSelect" class="form-label">Selecionar Caso</label>
-          <select id="casoSelect" class="form-select">
-            <option selected disabled>Selecione um caso</option>
-          </select>
-        </div>
-        <div class="text-end mb-4">
-          <button id="btnVerRelatorio" class="btn btn-primary">Visualizar Relatório</button>
-        </div>
-
-        <div id="relatorioContainer" style="display: none;">
-          <div class="report-section">
-            <div class="report-header">
-              <h4 id="tituloCaso">Título do Caso</h4>
+      <div class="card shadow">
+        <!-- Cabeçalho melhorado -->
+        <div class="header-section">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h2 class="mb-0">Gerar Documentos do Caso</h2>
+              <p class="text-muted mb-0">Crie relatórios e laudos técnicos completos</p>
             </div>
-
-            <div class="mb-4" id="laudoCabecalho">
-              <h5>Identificação do Laudo</h5>
-              <p><strong>Número do Caso:</strong> <span id="laudoNumero"></span></p>
-              <p><strong>Perito:</strong> <span id="laudoPerito"></span></p>
-              <p><strong>Local:</strong> <span id="laudoLocal"></span></p>
-              <p><strong>Data do Ocorrido:</strong> <span id="dataOcorrido"></span></p>
-              <p><strong>Data da Emissão:</strong> <span id="laudoDataEmissao"></span></p>
-              <p><strong>Status:</strong> <span class="statusCaso"></span></p>
+            <div class="document-actions">
+              <button id="btnHelp" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Ajuda">
+                <i class="bi bi-question-circle"></i>
+              </button>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="text-end mt-3">
-        <button id="btnDownloadPdf" class="btn btn-success">
-          <i class="bi bi-download me-1"></i> Baixar Laudo em PDF
-        </button>
+        <!-- Seção de geração -->
+        <div class="generation-section">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label for="casoSelect" class="form-label">Selecionar Caso</label>
+              <select id="casoSelect" class="form-select">
+                <option selected disabled>Selecione um caso</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+              <select id="tipoDocumento" class="form-select">
+                <option value="relatorio">Relatório</option>
+                <option value="laudo">Laudo Técnico</option>
+                <option value="ambos">Ambos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mb-3">
+            <button id="btnGerarDocumento" class="btn btn-primary">
+              <i class="bi bi-magic me-2"></i>Gerar Documento
+            </button>
+            <div class="d-flex gap-2">
+              <button id="btnVisualizarRelatorio" class="btn btn-outline-primary" disabled>
+                <i class="bi bi-eye me-2"></i>Visualizar Relatório
+              </button>
+              <button id="btnVisualizarLaudo" class="btn btn-outline-primary" disabled>
+                <i class="bi bi-eye me-2"></i>Visualizar Laudo
+              </button>
+            </div>
+          </div>
+
+          <div class="alert alert-info" id="statusGeracao" style="display: none;"></div>
+        </div>
+
+        <!-- Tabs para visualização -->
+        <ul class="nav nav-tabs px-3" id="documentoTabs">
+          <li class="nav-item">
+            <a class="nav-link active" id="relatorio-tab" data-bs-toggle="tab" href="#relatorioContent">Relatório</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="laudo-tab" data-bs-toggle="tab" href="#laudoContent">Laudo</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- Conteúdo do Relatório -->
+          <div class="tab-pane fade show active" id="relatorioContent">
+            <div class="report-section">
+              <div class="report-header">
+                <h4 id="tituloRelatorio">Relatório do Caso</h4>
+              </div>
+              <div id="conteudoRelatorio" class="document-content p-3"></div>
+            </div>
+          </div>
+
+          <!-- Conteúdo do Laudo -->
+          <div class="tab-pane fade" id="laudoContent">
+            <div class="report-section">
+              <div class="report-header">
+                <h4 id="tituloLaudo">Laudo Técnico</h4>
+              </div>
+              <div id="conteudoLaudo" class="document-content p-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-end p-3">
+          <button id="btnDownloadRelatorio" class="btn btn-success me-2" disabled>
+            <i class="bi bi-download me-1"></i> Baixar Relatório
+          </button>
+          <button id="btnDownloadLaudo" class="btn btn-success" disabled>
+            <i class="bi bi-download me-1"></i> Baixar Laudo
+          </button>
+        </div>
       </div>
     </main>
-    <div id="relatorioContainer" style="display: none;">
-  <div class="report-section">
-    <div class="report-header">
-      <h4 id="tituloCaso">Título do Caso</h4>
-    </div>
+  </div>
 
-    <div class="mb-4" id="laudoCabecalho">
-      <h5>Identificação do Laudo</h5>
-      <p><strong>Número do Caso:</strong> <span id="laudoNumero"></span></p>
-      <p><strong>Perito:</strong> <span id="laudoPerito"></span></p>
-      <p><strong>Local:</strong> <span id="laudoLocal"></span></p>
-      <p><strong>Data do Ocorrido:</strong> <span id="dataOcorrido"></span></p>
-      <p><strong>Data da Emissão:</strong> <span id="laudoDataEmissao"></span></p>
-      <p><strong>Status:</strong> <span class="statusCaso"></span></p>
-    </div>
-
-    <!-- NOVA SEÇÃO PARA O RELATÓRIO GERADO PELA IA -->
-    <div class="mt-4 p-3 bg-light border rounded">
-      <h5>Relatório Técnico Gerado</h5>
-      <div id="relatorioGerado" class="mt-2"></div>
+  <!-- Modal de Carregamento -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center p-4">
+          <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <h5 id="loadingMessage">Gerando documento...</h5>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/relatorio.js"></script>
   <script src="js/site.js"></script>
-  
 </body>
 </html>
