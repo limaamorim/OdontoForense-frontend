@@ -28,6 +28,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = 'index.html';
   }
 
+  try {
+    await carregarResumoCorEtnia(token);
+  } catch (err) {
+    console.error('Erro completo:', err);
+    localStorage.removeItem('token');
+    window.location.href = 'index.html';
+  }
+
   document.getElementById('btnFiltrar').addEventListener('click', aplicarFiltroEAtualizarGraficos);
 
   function aplicarFiltroEAtualizarGraficos() {
@@ -78,53 +86,73 @@ function carregarResumoCasosFiltrados(casos) {
     }
   });
 
-  // Gráfico de linha por dia
-  const casosPorDia = {};
+  // Agrupar os dados por mês a partir da lista de casos
+  const casosPorMes = {};
   casos.forEach(caso => {
     const data = new Date(caso.dataOcorrido);
-    const chave = `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}`;
-    casosPorDia[chave] = (casosPorDia[chave] || 0) + 1;
+    if (isNaN(data)) return;
+    const mesAno = `${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()}`;
+    casosPorMes[mesAno] = (casosPorMes[mesAno] || 0) + 1;
   });
 
-  const diasOrdenados = Object.keys(casosPorDia).sort((a, b) => {
-    const [diaA, mesA] = a.split('/').map(Number);
-    const [diaB, mesB] = b.split('/').map(Number);
-    return new Date(2000, mesA - 1, diaA) - new Date(2000, mesB - 1, diaB);
+  // Obter os meses ordenados
+  const mesesOrdenados = Object.keys(casosPorMes).sort((a, b) => {
+    const [mesA, anoA] = a.split('/').map(Number);
+    const [mesB, anoB] = b.split('/').map(Number);
+    return new Date(anoA, mesA - 1) - new Date(anoB, mesB - 1);
   });
 
-  const ctxLinha = document.getElementById('graficoCasosPorMes').getContext('2d');
-  if (window.graficoLinha) window.graficoLinha.destroy();
-  window.graficoLinha = new Chart(ctxLinha, {
-    type: 'line',
-    data: {
-      labels: diasOrdenados,
-      datasets: [{
-        label: 'Casos por Dia',
-        data: diasOrdenados.map(d => casosPorDia[d]),
-        borderColor: '#0d6efd',
-        backgroundColor: 'rgba(13, 110, 253, 0.2)',
-        fill: true,
-        tension: 0.3,
-        pointBackgroundColor: '#0d6efd'
-      }]
+// Calcular o valor máximo para ajustar o eixo Y
+const valores = mesesOrdenados.map(m => casosPorMes[m]);
+const maxValor = Math.max(...valores);
+const paddingY = Math.ceil(maxValor * 0.25); // 15% de folga visual
+
+// Criar o gráfico com os dados mensais
+const ctxLinha = document.getElementById('graficoCasosPorMes').getContext('2d');
+if (window.graficoLinha) window.graficoLinha.destroy();
+window.graficoLinha = new Chart(ctxLinha, {
+  type: 'line',
+  data: {
+    labels: mesesOrdenados,
+    datasets: [{
+      label: 'Casos por Mês',
+      data: valores,
+      borderColor: '#0d6efd',
+      backgroundColor: 'rgba(13, 110, 253, 0.2)',
+      fill: true,
+      tension: 0.3,
+      pointBackgroundColor: '#0d6efd',
+      clip: false // impede o corte lateral dos dados/rótulos
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        font: { weight: 'bold' },
+        formatter: (value) => value,
+        color: '#0d6efd',
+        clamp: true, // impede o corte do rótulo
+        clip: false
+      }
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: maxValor + paddingY,
+        title: { display: true, text: 'Quantidade de Casos' }
       },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Quantidade de Casos' }
-        },
-        x: {
-          title: { display: true, text: 'Dia/Mês' }
-        }
+      x: {
+        title: { display: true, text: 'Mês/Ano' }
       }
     }
-  });
+  },
+  plugins: [ChartDataLabels]
+});
 
   exibirMapaDeCasos(casos);
 }
@@ -218,6 +246,92 @@ async function carregarResumoUsuarios(token) {
     }
   } catch (err) {
     console.error('Erro ao carregar usuários:', err);
+  }
+}
+
+async function carregarResumoCorEtnia() {
+  try {
+    const res = await fetch('https://odontoforense-backend.onrender.com/api/vitimas');
+    if (!res.ok) {
+      throw new Error('Erro na requisição: ' + res.status);
+    }
+
+    const resultado = await res.json();
+    const vitimas = resultado.data?.docs || resultado.data || resultado || [];
+
+    // Inicializa contagem para cada corEtnia conhecida
+    const contagemPorCorEtnia = {
+      branca: 0,
+      preta: 0,
+      parda: 0,
+      amarela: 0,
+      indigena: 0,
+      nao_informado: 0
+    };
+
+    // Conta vítimas agrupando por corEtnia
+    vitimas.forEach(vitima => {
+      const cor = (vitima.corEtnia || 'nao_informado').toLowerCase().replace(/\s+/g, '_');
+      if (contagemPorCorEtnia.hasOwnProperty(cor)) {
+        contagemPorCorEtnia[cor]++;
+      } else {
+        contagemPorCorEtnia.nao_informado++;
+      }
+    });
+
+    // Atualiza card com total de vítimas (se existir)
+    const cards = document.querySelectorAll('.card-counter h1');
+    if (cards.length > 3) {
+      cards[3].textContent = vitimas.length;
+    }
+
+    const labels = ['Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Não Informado'];
+    const dados = [
+      contagemPorCorEtnia.branca,
+      contagemPorCorEtnia.preta,
+      contagemPorCorEtnia.parda,
+      contagemPorCorEtnia.amarela,
+      contagemPorCorEtnia.indigena,
+      contagemPorCorEtnia.nao_informado
+    ];
+
+    const ctx = document.getElementById('graficoCorEtnia')?.getContext('2d');
+    if (ctx) {
+      if (window.graficoCorEtnia) window.graficoCorEtnia.destroy();
+      window.graficoCorEtnia = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Distribuição por Cor/Etnia',
+            data: dados,
+            backgroundColor: ['#FFC0CB', '#000000', '#A0522D', '#FFD700', '#228B22', '#808080']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              bodyFont: { size: 12 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Quantidade de Vítimas' }
+            },
+            x: {
+              title: { display: true, text: 'Cor/Etnia' }
+            }
+          }
+        }
+      });
+    }
+
+  } catch (err) {
+    console.error('Erro ao carregar vítimas:', err);
   }
 }
 
