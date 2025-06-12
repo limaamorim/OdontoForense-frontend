@@ -374,3 +374,190 @@ const evidenciasHtml = evidencias.length ? evidencias.map(e => `
 
   new bootstrap.Modal(document.getElementById('modalVisualizarCaso')).show();
 }
+document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  if (!token) return window.location.href = 'index.html';
+
+  carregarCasosRecentes(token);
+  atualizarContadorVitimas();
+
+  document.getElementById('vitimasContainer')?.addEventListener('click', function(e) {
+    if (e.target.closest('.btn-remover-vitima')) {
+      e.target.closest('.vitima-card').remove();
+      atualizarContadorVitimas();
+    }
+  });
+
+  document.getElementById('btnAdicionarVitima')?.addEventListener('click', function() {
+    const template = document.getElementById('templateVitima');
+    const clone = template.content.cloneNode(true);
+    document.getElementById('vitimasContainer').appendChild(clone);
+    atualizarContadorVitimas();
+  });
+
+  document.getElementById('btnAdicionarVitimaEditar')?.addEventListener('click', function() {
+    const template = document.getElementById('templateVitima');
+    const clone = template.content.cloneNode(true);
+    document.getElementById('vitimasContainerEditar').appendChild(clone);
+  });
+
+  document.getElementById('vitimasContainerEditar')?.addEventListener('click', function(e) {
+    if (e.target.closest('.btn-remover-vitima')) {
+      e.target.closest('.vitima-card').remove();
+    }
+  });
+
+  const form = document.getElementById('formCaso');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btnSubmit = form.querySelector('button[type="submit"]');
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('loading');
+
+      try {
+        const payload = {
+          numeroCaso: document.getElementById('numeroCaso').value,
+          titulo: document.getElementById('titulo').value,
+          descricao: document.getElementById('descricao').value,
+          dataOcorrido: document.getElementById('dataOcorrido').value,
+          local: document.getElementById('local').value,
+          status: document.getElementById('status').value,
+          vitimas: Array.from(document.querySelectorAll('.vitima-card')).map(card => ({
+            nic: card.querySelector('.vitima-nic').value,
+            nome: card.querySelector('.vitima-nome').value,
+            genero: card.querySelector('.vitima-genero').value,
+            idade: card.querySelector('.vitima-idade').value,
+            corEtnia: card.querySelector('.vitima-corEtnia').value
+          }))
+        };
+
+        const response = await fetch('https://odontoforense-backend.onrender.com/api/casos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Caso criado com sucesso!');
+          form.reset();
+          document.getElementById('vitimasContainer').innerHTML = `
+            <div class="text-muted text-center py-3" id="nenhumaVitimaMsg">
+              <i class="bi bi-person-x fs-4"></i>
+              <p class="mt-2 mb-0">Nenhuma vítima adicionada</p>
+            </div>
+          `;
+          atualizarContadorVitimas();
+          window.location.href = 'dashboard.html';
+        } else {
+          throw new Error(data.error || 'Erro ao criar caso');
+        }
+      } catch (err) {
+        console.error('Erro ao criar caso:', err);
+        alert(err.message || 'Erro no servidor');
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.classList.remove('loading');
+      }
+    });
+  }
+
+  const formEditar = document.getElementById('formEditarCaso');
+  if (formEditar) {
+    formEditar.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editarCasoId').value;
+      const btnSubmit = formEditar.querySelector('button[type="submit"]');
+
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('loading');
+
+      try {
+        const payload = {
+          numeroCaso: document.getElementById('editarNumeroCaso').value,
+          titulo: document.getElementById('editarTitulo').value,
+          descricao: document.getElementById('editarDescricao').value,
+          dataOcorrido: document.getElementById('editarDataOcorrido').value,
+          local: document.getElementById('editarLocal').value,
+          status: document.getElementById('editarStatus').value,
+          vitimas: Array.from(document.querySelectorAll('#vitimasContainerEditar .vitima-card')).map(card => ({
+            nic: card.querySelector('.vitima-nic').value,
+            nome: card.querySelector('.vitima-nome').value,
+            genero: card.querySelector('.vitima-genero').value,
+            idade: card.querySelector('.vitima-idade').value,
+            corEtnia: card.querySelector('.vitima-corEtnia').value
+          }))
+        };
+
+        const res = await fetch(`https://odontoforense-backend.onrender.com/api/casos/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('Caso atualizado com sucesso!');
+          bootstrap.Modal.getInstance(document.getElementById('modalEditarCaso')).hide();
+          carregarCasosRecentes(token);
+        } else {
+          throw new Error(data.error || 'Erro ao atualizar caso');
+        }
+      } catch (err) {
+        console.error('Erro ao atualizar caso:', err);
+        alert(err.message || 'Erro inesperado');
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.classList.remove('loading');
+      }
+    });
+  }
+});
+
+async function abrirModalEdicao(caso) {
+  const token = localStorage.getItem('token');
+  document.getElementById('editarCasoId').value = caso._id;
+  document.getElementById('editarNumeroCaso').value = caso.numeroCaso;
+  document.getElementById('editarTitulo').value = caso.titulo;
+  document.getElementById('editarDescricao').value = caso.descricao;
+  document.getElementById('editarDataOcorrido').value = caso.dataOcorrido?.substring(0, 10);
+  document.getElementById('editarLocal').value = caso.local;
+  document.getElementById('editarStatus').value = caso.status;
+  
+  document.getElementById('vitimasContainerEditar').innerHTML = '';
+
+  try {
+    const resVitimas = await fetch(`https://odontoforense-backend.onrender.com/api/vitimas/casos/${caso._id}/vitimas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const vitimas = await resVitimas.json();
+
+    vitimas.forEach(v => {
+      const template = document.getElementById('templateVitima');
+      const clone = template.content.cloneNode(true);
+      document.getElementById('vitimasContainerEditar').appendChild(clone);
+      const cards = document.querySelectorAll('#vitimasContainerEditar .vitima-card');
+      const card = cards[cards.length - 1];
+
+      card.querySelector('.vitima-nic').value = v.nic;
+      card.querySelector('.vitima-nome').value = v.nome;
+      card.querySelector('.vitima-genero').value = v.genero;
+      card.querySelector('.vitima-idade').value = v.idade;
+      card.querySelector('.vitima-corEtnia').value = v.corEtnia;
+    });
+  } catch (err) {
+    console.error("Erro ao carregar vítimas na edição:", err);
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById('modalEditarCaso'));
+  modal.show();
+}
