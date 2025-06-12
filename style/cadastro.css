@@ -111,3 +111,10 @@
   background-color: #6f42c1 !important; /* tom roxo */
   color: #fff !important;
 }
+.alerta-acesso-negado {
+  background: #fff;
+  border: 2px dashed #dc3545;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 50px auto;
+}
