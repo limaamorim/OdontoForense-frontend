@@ -302,12 +302,18 @@ async function visualizarCaso(caso) {
 
   // Buscar evidências do caso
   let evidencias = [];
-  try {
-    const resEvidencias = await fetch(`https://odontoforense-backend.onrender.com/api/evidencias?casoId=${caso._id}`);
-    if (resEvidencias.ok) evidencias = await resEvidencias.json();
-  } catch (err) {
-    console.error("Erro ao buscar evidências:", err);
+try {
+  const resEvidencias = await fetch(`https://odontoforense-backend.onrender.com/api/evidencias?casoId=${caso._id}`);
+  if (resEvidencias.ok) {
+    const evidenciasData = await resEvidencias.json();
+    evidencias = evidenciasData.data || [];
+  } else {
+    console.error("Erro ao buscar evidências:", resEvidencias.statusText);
   }
+} catch (err) {
+  console.error("Erro ao buscar evidências:", err);
+}
+
 
   // Gerar HTML das vítimas
   const vitimasHtml = vitimas.length ? vitimas.map((v, i) => `
