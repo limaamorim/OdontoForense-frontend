@@ -128,11 +128,10 @@
               </div>
             </div>
           </div>
-      
           <div class="col-md-6">
             <div class="card shadow-sm h-100">
               <div class="card-header bg-primary text-white">
-                <i class="bi bi-graph-up me-2"></i>Casos Registrados por Dia
+                <i class="bi bi-graph-up me-2"></i>Casos Registrados por Meses
               </div>
               <div class="card-body">
                 <canvas id="graficoCasosPorMes" height="250"></canvas>
@@ -146,6 +145,16 @@
               </div>
               <div class="card-body">
                 <canvas id="graficoUsuariosPorTipo" height="250"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-primary text-white">
+                <i class="bi bi-people-fill me-2"></i>Vitimas por Cor/Etnia
+              </div>
+              <div class="card-body">
+                <canvas id="graficoCorEtnia" width="400" height="300"></canvas>
               </div>
             </div>
           </div>
@@ -164,6 +173,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/site.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
