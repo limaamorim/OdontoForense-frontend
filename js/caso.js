@@ -337,15 +337,15 @@ try {
   // Gerar HTML das evidências
 const evidenciasHtml = evidencias.length ? evidencias.map(e => `
   <div class="evidence-item col-md-3 mb-3">
-'    <a href="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" target="_blank">
-  <img src="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" 
-       class="img-fluid border rounded shadow-sm w-100"  
-       alt="${e.nome}">
-</a>
-'
+    <a href="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" target="_blank">
+      <img src="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" 
+           class="img-fluid border rounded shadow-sm w-100"  
+           alt="${e.nome}">
+    </a>
     <div class="evidence-caption small text-muted mt-1 text-center">${e.nome || 'Sem nome'}</div>
   </div>
 `).join('') : `<p class="text-muted">Nenhuma evidência registrada</p>`;
+
 
 
   // Definir conteúdo do modal
