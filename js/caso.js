@@ -334,7 +334,7 @@ try {
       <p class="mt-2 mb-0">Nenhuma vítima cadastrada</p>
     </div>`;
 
-  // Gerar HTML das evidências
+
 const evidenciasHtml = evidencias.length ? evidencias.map(e => `
   <div class="evidence-item col-md-3 mb-3">
     <a href="${e.imagem}" target="_blank">
