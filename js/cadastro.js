@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const tipoInput = document.getElementById('tipo');
   const tabelaUsuarios = document.getElementById('tabelaUsuarios');
   const tbody = tabelaUsuarios?.querySelector('tbody');
-  const mainContent = document.querySelector('main');
 
   let isAdmin = false;
   try {
@@ -21,21 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     isAdmin = payload?.usuario?.tipo === 'administrador';
   } catch (err) {
     console.warn('Token inválido:', err);
-  }
-
-  if (!isAdmin) {
-    const cardUsuarios = document.getElementById('cardUsuarios');
-    if (cardUsuarios) cardUsuarios.style.display = 'none';
-
-    const acessoNegado = document.createElement('div');
-    acessoNegado.className = 'text-center p-5';
-    acessoNegado.innerHTML = `
-      <img src="img/logo.png" alt="Logo" style="max-width:150px; margin-bottom:20px;">
-      <h2 class="text-danger fw-bold">ACESSO NEGADO</h2>
-      <p class="text-muted fs-5">Você não tem permissão para acessar esta área.</p>
-    `;
-    mainContent.appendChild(acessoNegado);
-    return;
   }
 
   formCadastro.addEventListener('submit', async (e) => {
@@ -76,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bootstrap.Modal.getInstance(document.getElementById('modalNovoUsuario')).hide();
       formCadastro.dataset.editando = '';
       formCadastro.reset();
-      carregarUsuarios();
+      if (isAdmin) carregarUsuarios();
     } catch (err) {
       console.error('Erro ao salvar usuário:', err);
       alert('Erro inesperado');
@@ -136,7 +120,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  carregarUsuarios();
+  if (isAdmin) {
+    carregarUsuarios();
+  } else {
+    const cardUsuarios = document.getElementById('cardUsuarios');
+    if (cardUsuarios) cardUsuarios.style.display = 'none';
+
+    const acessoNegado = document.createElement('div');
+    acessoNegado.className = 'd-flex flex-column justify-content-center align-items-center';
+    acessoNegado.style.height = '80vh';
+    acessoNegado.innerHTML = `
+      <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 6rem;"></i>
+      <h2 class="text-danger fw-bold mt-4">ACESSO NEGADO</h2>
+      <p class="text-muted fs-5">Você não tem permissão para acessar esta área.</p>
+    `;
+    document.querySelector('main').appendChild(acessoNegado);
+  }
 
   window.editarUsuario = (id, nome, email, tipo) => {
     document.getElementById('modalNovoUsuarioLabel').innerHTML = '✏️ Editar Usuário';
