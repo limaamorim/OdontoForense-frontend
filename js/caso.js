@@ -337,8 +337,8 @@ try {
   // Gerar HTML das evidências
 const evidenciasHtml = evidencias.length ? evidencias.map(e => `
   <div class="evidence-item col-md-3 mb-3">
-    <a href="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" target="_blank">
-      <img src="https://odontoforense-backend.onrender.com/uploads/${e.imagem}" 
+    <a href="${e.imagem}" target="_blank">
+      <img src="${e.imagem}" 
            class="img-fluid border rounded shadow-sm w-100"  
            alt="${e.nome}">
     </a>
