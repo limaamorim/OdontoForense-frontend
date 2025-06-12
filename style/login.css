@@ -306,3 +306,66 @@ button {
     padding: 2rem;
   }
 }
+@media (max-width: 480px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    padding: 1rem;
+  }
+
+  .brand-container h1 {
+    font-size: 1.6rem;
+  }
+
+  .slogan {
+    font-size: 0.85rem;
+  }
+
+  .features {
+    margin-top: 2rem;
+    max-width: 100%;
+  }
+
+  .feature-item {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-item i {
+    font-size: 1rem;
+    margin-right: 0.7rem;
+  }
+
+  .right-panel {
+    padding: 1rem;
+  }
+
+  .login-box {
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+
+  .login-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-header p {
+    font-size: 0.85rem;
+  }
+
+  .input-group input {
+    padding: 12px 12px 12px 40px;
+    font-size: 0.95rem;
+  }
+
+  #submitBtn {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .forgot-password {
+    font-size: 0.8rem;
+  }
+}
