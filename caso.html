@@ -150,55 +150,71 @@
       </div>
 
       <!-- Modal de Edição de Caso -->
-      <div class="modal fade" id="modalEditarCaso" tabindex="-1" aria-labelledby="modalEditarCasoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content border-0 shadow-lg rounded-4">
-            <form id="formEditarCaso">
-              <div class="modal-header bg-warning text-dark rounded-top-4">
-                <h5 class="modal-title" id="modalEditarCasoLabel"><i class="bi bi-pencil-square me-2"></i> Editar Caso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+     <div class="modal fade" id="modalEditarCaso" tabindex="-1" aria-labelledby="modalEditarCasoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <form id="formEditarCaso">
+        <div class="modal-header bg-warning text-dark rounded-top-4">
+          <h5 class="modal-title" id="modalEditarCasoLabel"><i class="bi bi-pencil-square me-2"></i> Editar Caso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body px-4 py-4 bg-light">
+          <input type="hidden" id="editarCasoId">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Número do Caso</label>
+              <input type="text" class="form-control" id="editarNumeroCaso" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Título</label>
+              <input type="text" class="form-control" id="editarTitulo" required>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label fw-semibold">Descrição</label>
+              <textarea class="form-control" id="editarDescricao" rows="3" required></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Data do Ocorrido</label>
+              <input type="date" class="form-control" id="editarDataOcorrido" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Local</label>
+              <input type="text" class="form-control" id="editarLocal" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              <select class="form-select" id="editarStatus" required>
+                <option value="Aberto">Aberto</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Fechado">Fechado</option>
+              </select>
+            </div>
+
+            <!-- AQUI ENTRA A PARTE NOVA -->
+            <div class="col-md-12 mt-4">
+              <div class="vitimas-header">
+                <h3 class="vitimas-title">Vítima(s)</h3>
+                <button type="button" class="btn btn-sm btn-primary" id="btnAdicionarVitimaEditar">
+                  <i class="bi bi-plus-lg"></i> Adicionar Vítima
+                </button>
               </div>
-              <div class="modal-body px-4 py-4 bg-light">
-                <input type="hidden" id="editarCasoId">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Número do Caso</label>
-                    <input type="text" class="form-control" id="editarNumeroCaso" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Título</label>
-                    <input type="text" class="form-control" id="editarTitulo" required>
-                  </div>
-                  <div class="col-md-12">
-                    <label class="form-label fw-semibold">Descrição</label>
-                    <textarea class="form-control" id="editarDescricao" rows="3" required></textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Data do Ocorrido</label>
-                    <input type="date" class="form-control" id="editarDataOcorrido" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Local</label>
-                    <input type="text" class="form-control" id="editarLocal" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Status</label>
-                    <select class="form-select" id="editarStatus" required>
-                      <option value="Aberto">Aberto</option>
-                      <option value="Em andamento">Em andamento</option>
-                      <option value="Fechado">Fechado</option>
-                    </select>
-                  </div>
-                </div>
+              <div id="vitimasContainerEditar" class="mb-3">
+                <!-- Vítimas serão carregadas aqui na edição -->
               </div>
-              <div class="modal-footer bg-white px-4 py-3 border-top-0">
-                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              </div>
-            </form>
+            </div>
+            <!-- FIM DA PARTE NOVA -->
+
           </div>
         </div>
-      </div>
+        <div class="modal-footer bg-white px-4 py-3 border-top-0">
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
       <!-- Modal de Visualização de Caso -->
       <div class="modal fade" id="modalVisualizarCaso" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -247,25 +263,11 @@
             </div>
             <div>
               <label class="form-label small">Idade</label>
-              <select class="form-select form-select-sm vitima-idade" required>
-                <option value="bebe">Bebê</option>
-                <option value="crianca">Criança</option>
-                <option value="adolescente">Adolescente</option>
-                <option value="adulta">Adulta</option>
-                <option value="idosa">Idosa</option>
-                <option value="nao_informado">Não Identificado</option>
-              </select>
+              <input type="text" class="form-control form-control-sm vitima-idade" min="0">
             </div>
             <div>
               <label class="form-label small">Cor</label>
-              <select class="form-select form-select-sm vitima-corEtnia" required>
-              <option value="branca">Branca</option>
-                <option value="preta">Preta</option>
-                <option value="parda">Parda</option>
-                <option value="amarela">Amarela</option>
-                <option value="indigena">Indígena</option>
-                <option value="nao_informado">Não Identificado</option>
-              </select>
+              <input type="text" class="form-control form-control-sm vitima-corEtnia">
             </div>
           </div>
         </div>
