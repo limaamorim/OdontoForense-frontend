@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tipoInput = document.getElementById('tipo');
   const tabelaUsuarios = document.getElementById('tabelaUsuarios');
   const tbody = tabelaUsuarios?.querySelector('tbody');
+  const mainContent = document.querySelector('main');
 
   let isAdmin = false;
   try {
@@ -20,6 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
     isAdmin = payload?.usuario?.tipo === 'administrador';
   } catch (err) {
     console.warn('Token inválido:', err);
+  }
+
+  if (!isAdmin) {
+    const cardUsuarios = document.getElementById('cardUsuarios');
+    if (cardUsuarios) cardUsuarios.style.display = 'none';
+
+    const acessoNegado = document.createElement('div');
+    acessoNegado.className = 'text-center p-5';
+    acessoNegado.innerHTML = `
+      <img src="img/logo.png" alt="Logo" style="max-width:150px; margin-bottom:20px;">
+      <h2 class="text-danger fw-bold">ACESSO NEGADO</h2>
+      <p class="text-muted fs-5">Você não tem permissão para acessar esta área.</p>
+    `;
+    mainContent.appendChild(acessoNegado);
+    return;
   }
 
   formCadastro.addEventListener('submit', async (e) => {
@@ -30,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const senha = senhaInput.value.trim();
     const tipo = tipoInput.value;
 
-    // Criação ou atualização dependendo se existe ID de edição
     const id = formCadastro.dataset.editando;
     const payload = { nome, email, senha, tipo };
 
@@ -61,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bootstrap.Modal.getInstance(document.getElementById('modalNovoUsuario')).hide();
       formCadastro.dataset.editando = '';
       formCadastro.reset();
-      if (isAdmin) carregarUsuarios();
+      carregarUsuarios();
     } catch (err) {
       console.error('Erro ao salvar usuário:', err);
       alert('Erro inesperado');
@@ -121,12 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (isAdmin) {
-    carregarUsuarios();
-  } else {
-    const cardUsuarios = document.getElementById('cardUsuarios');
-    if (cardUsuarios) cardUsuarios.style.display = 'none';
-  }
+  carregarUsuarios();
 
   window.editarUsuario = (id, nome, email, tipo) => {
     document.getElementById('modalNovoUsuarioLabel').innerHTML = '✏️ Editar Usuário';
