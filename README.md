@@ -109,12 +109,11 @@ file:///CAMINHO_DO_PROJETO/frontend/index.html
 
 ---
 
-## 💡 Melhorias futuras
+## 💡 Melhorias
 
 - Painel com gráficos estatísticos
 - Filtros por data/status
-- Recuperação de senha
-- Controle de logs e histórico de edições
+- Adcionar Vítimas
 - Permissões dinâmicas por perfil
 
 ---
