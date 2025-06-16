@@ -312,25 +312,23 @@ function gerarGraficosVitimas(casos) {
   const ctxGenero = document.getElementById('graficoGeneroVitimas')?.getContext('2d');
   if (window.graficoGenero) window.graficoGenero.destroy();
   if (ctxGenero) {
-    window.graficoGenero = new Chart(ctxGenero, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(generoContagem),
-        datasets: [{
-          label: 'Nº de Vítimas',
-          data: Object.values(generoContagem),
-          backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true },
-          x: { title: { display: true, text: 'Gênero' } }
-        }
-      }
-    });
+   window.graficoGenero = new Chart(ctxGenero, {
+  type: 'polarArea',
+  data: {
+    labels: Object.keys(generoContagem),
+    datasets: [{
+      data: Object.values(generoContagem),
+      backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd']
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'right' },
+    }
+  }
+});
+
   }
 
   // Idade
@@ -338,24 +336,32 @@ function gerarGraficosVitimas(casos) {
   if (window.graficoIdade) window.graficoIdade.destroy();
   if (ctxIdade) {
     window.graficoIdade = new Chart(ctxIdade, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(idadeContagem),
-        datasets: [{
-          label: 'Nº de Vítimas',
-          data: Object.values(idadeContagem),
-          backgroundColor: '#20c997'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true },
-          x: { title: { display: true, text: 'Faixa Etária' } }
-        }
+  type: 'radar',
+  data: {
+    labels: Object.keys(idadeContagem),
+    datasets: [{
+      label: 'Vítimas por Idade',
+      data: Object.values(idadeContagem),
+      fill: true,
+      backgroundColor: 'rgba(32, 201, 151, 0.4)',
+      borderColor: '#20c997',
+      pointBackgroundColor: '#20c997',
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      r: {
+        angleLines: { display: true },
+        suggestedMin: 0
       }
-    });
+    }
+  }
+});
+
   }
 }
 
