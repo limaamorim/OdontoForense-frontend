@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     carregarResumoCasosFiltrados(casosFiltrados);
+    gerarGraficosVitimas(casosFiltrados);
     carregarResumoEvidenciasFiltradas(casosFiltrados);
   }
 });
@@ -279,3 +280,82 @@ async function carregarTotalEvidencias(token) {
     console.error('Erro ao carregar evidências:', err);
   }
 }
+function gerarGraficosVitimas(casos) {
+  const generoContagem = {
+    masculino: 0,
+    feminino: 0,
+    outro: 0,
+    'nao informado': 0
+  };
+
+  const idadeContagem = {
+    bebe: 0,
+    crianca: 0,
+    adolescente: 0,
+    adulta: 0,
+    idosa: 0,
+    nao_informado: 0
+  };
+
+  casos.forEach(caso => {
+    if (!caso.vitimas) return;
+    caso.vitimas.forEach(v => {
+      const genero = (v.genero || 'nao informado').toLowerCase();
+      const idade = (v.idade || 'nao_informado').toLowerCase();
+
+      if (generoContagem[genero] !== undefined) generoContagem[genero]++;
+      if (idadeContagem[idade] !== undefined) idadeContagem[idade]++;
+    });
+  });
+
+  // Gênero
+  const ctxGenero = document.getElementById('graficoGeneroVitimas')?.getContext('2d');
+  if (window.graficoGenero) window.graficoGenero.destroy();
+  if (ctxGenero) {
+    window.graficoGenero = new Chart(ctxGenero, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(generoContagem),
+        datasets: [{
+          label: 'Nº de Vítimas',
+          data: Object.values(generoContagem),
+          backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true },
+          x: { title: { display: true, text: 'Gênero' } }
+        }
+      }
+    });
+  }
+
+  // Idade
+  const ctxIdade = document.getElementById('graficoIdadeVitimas')?.getContext('2d');
+  if (window.graficoIdade) window.graficoIdade.destroy();
+  if (ctxIdade) {
+    window.graficoIdade = new Chart(ctxIdade, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(idadeContagem),
+        datasets: [{
+          label: 'Nº de Vítimas',
+          data: Object.values(idadeContagem),
+          backgroundColor: '#20c997'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true },
+          x: { title: { display: true, text: 'Faixa Etária' } }
+        }
+      }
+    });
+  }
+}
+
