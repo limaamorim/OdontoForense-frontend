@@ -283,7 +283,73 @@ async function exibirMapaDeCasos(casos) {
     L.marker(coords).addTo(mapa)
       .bindPopup(`<strong>${caso.titulo}</strong><br>${local}<br>Status: ${caso.status}`);
   }
+}async function exibirMapaDeCasos(casos) {
+  const mapaContainer = document.getElementById('mapaCasos');
+  if (!mapaContainer) return;
+
+  // Remove mapa anterior, se já existir
+  if (window._mapaInstancia) {
+    window._mapaInstancia.remove();
+  }
+
+  const mapa = L.map('mapaCasos').setView([-14.2350, -51.9253], 4);
+  window._mapaInstancia = mapa;
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(mapa);
+
+  const geocodeCache = {};
+
+  for (const caso of casos) {
+    const local = caso.local?.trim();
+    if (!local) continue;
+
+    let coords = geocodeCache[local];
+
+    if (!coords) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(local)}`, {
+          headers: { 'User-Agent': 'ODONTOCRIM Dashboard' }
+        });
+
+        const data = await response.json();
+        if (data.length > 0) {
+          coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+          geocodeCache[local] = coords;
+        } else {
+          console.warn('Local não encontrado:', local);
+          continue;
+        }
+      } catch (error) {
+        console.error('Erro ao buscar coordenadas de:', local, error);
+        continue;
+      }
+    }
+
+    // Adiciona marcador com título, local, status e ID
+    const popupContent = `
+      <strong>${caso.numeroCaso}</strong><br>
+      Título: ${caso.titulo}<br>
+      Local: ${local}<br>
+      Status: ${caso.status}<br>
+      
+    `;
+
+            const redIcon = new L.Icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+
+        L.marker(coords, { icon: redIcon }).addTo(mapa).bindPopup(popupContent);
+
+  }
 }
+
 async function carregarTotalEvidencias(token) {
   try {
     const response = await fetch('https://odontoforense-backend.onrender.com/api/evidencias?limit=1000', {
@@ -387,70 +453,87 @@ function criarGraficoVitimas(tipo) {
   }
 
   if (tipo === 'genero') {
-    graficoVitimas = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(dadosGenero).map(key => 
-          key === 'masculino' ? 'Masculino' :
-          key === 'feminino' ? 'Feminino' :
-          key === 'outro' ? 'Outro' : 'Não informado'),
-        datasets: [{
-          label: 'Vítimas por Gênero',
-          data: Object.values(dadosGenero),
-          backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd'],
-          borderWidth: 1
-        }]
+  // Filtra apenas masculino, feminino e não informado
+  const generoFiltrado = ['masculino', 'feminino', 'nao informado'];
+  const labels = generoFiltrado.map(key => 
+    key === 'masculino' ? 'Masculino' :
+    key === 'feminino' ? 'Feminino' : 'Não informado'
+  );
+  const data = generoFiltrado.map(key => dadosGenero[key] || 0);
+
+  graficoVitimas = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Vítimas por Gênero',
+        data,
+        backgroundColor: ['#198754', '#fd7e14', '#dc3545'], // verde, laranja, cinza
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Quantidade' }
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Quantidade' }
-          },
-          x: {
-            title: { display: true, text: 'Gênero' }
-          }
+        x: {
+          title: { display: true, text: 'Gênero' }
         }
       }
-    });
-  } else {
-    graficoVitimas = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(dadosIdade).map(key => 
-          key === 'bebe' ? 'Bebê' :
-          key === 'crianca' ? 'Criança' :
-          key === 'adolescente' ? 'Adolescente' :
-          key === 'adulta' ? 'Adulto' :
-          key === 'idosa' ? 'Idoso' : 'Não informado'),
-        datasets: [{
-          label: 'Vítimas por Idade',
-          data: Object.values(dadosIdade),
-          backgroundColor: '#20c997',
-          borderWidth: 1
-        }]
+    }
+  });
+} else {
+  // Filtra todas menos "nao_informado"
+  const ordemIdade = ['bebe', 'crianca', 'adolescente', 'adulta', 'idosa'];
+  const labels = ordemIdade.map(key =>
+    key === 'bebe' ? 'Bebê' :
+    key === 'crianca' ? 'Criança' :
+    key === 'adolescente' ? 'Adolescente' :
+    key === 'adulta' ? 'Adulta' : 'Idosa'
+  );
+  const data = ordemIdade.map(key => dadosIdade[key] || 0);
+
+  graficoVitimas = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Vítimas por Idade',
+        data,
+        backgroundColor: [
+          '#198754', // Bebê - verde
+          '#fd7e14', // Criança - laranja
+          '#dc3545', // Adolescente - vermelho
+          '#0d6efd', // Adulta - azul
+          '#6f42c1'  // Idosa - roxo
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Quantidade' }
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Quantidade' }
-          },
-          x: {
-            title: { display: true, text: 'Faixa Etária' }
-          }
+        x: {
+          title: { display: true, text: 'Faixa Etária' }
         }
       }
-    });
-  }
+    }
+  });
+}
+
 }
