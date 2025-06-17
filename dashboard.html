@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/> 
+  
   <link rel="stylesheet" href="style/dashboard.css" />
   <link rel="stylesheet" href="style/theme.css">
 </head>
@@ -72,34 +73,44 @@
       </div>
 
       <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="card shadow-sm card-counter text-center">
-            <div class="card-body">
-              <i class="bi bi-folder fs-2 text-warning"></i>
-              <h5 class="mt-2">Casos</h5>
-              <h1 class="display-6">0</h1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card shadow-sm card-counter text-center">
-            <div class="card-body">
-              <i class="bi bi-search fs-2 text-success"></i>
-              <h5 class="mt-2">Evidências</h5>
-              <h1 class="display-6">0</h1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card shadow-sm card-counter text-center">
-            <div class="card-body">
-              <i class="bi bi-people fs-2 text-primary"></i>
-              <h5 class="mt-2">Usuários</h5>
-              <h1 class="display-6">0</h1>
-            </div>
-          </div>
-        </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm card-counter text-center">
+      <div class="card-body">
+        <i class="bi bi-folder fs-2 text-warning"></i>
+        <h5 class="mt-2">Casos</h5>
+        <h1 class="display-6">0</h1>
       </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm card-counter text-center">
+      <div class="card-body">
+        <i class="bi bi-search fs-2 text-success"></i>
+        <h5 class="mt-2">Evidências</h5>
+        <h1 class="display-6">0</h1>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm card-counter text-center">
+      <div class="card-body">
+        <i class="bi bi-people fs-2 text-primary"></i>
+        <h5 class="mt-2">Usuários</h5>
+        <h1 class="display-6">0</h1>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm card-counter text-center">
+      <div class="card-body">
+        <i class="bi bi-person-heart fs-2 text-danger"></i>
+        <h5 class="mt-2">Vítimas</h5>
+        <h1 class="display-6">0</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
         
       <div class="row mb-4">
         <div class="col-md-3">
@@ -138,16 +149,6 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-header bg-primary text-white">
-                <i class="bi bi-people-fill me-2"></i>Distribuição de Usuários
-              </div>
-              <div class="card-body">
-                <canvas id="graficoUsuariosPorTipo" height="250"></canvas>
-              </div>
-            </div>
-          </div>
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <div class="card shadow-sm h-100">
@@ -170,6 +171,7 @@
               </div>
             </div>
           </div>
+          
           <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
               <i class="bi bi-geo-alt-fill me-2"></i>Mapa dos Locais dos Casos
@@ -189,6 +191,7 @@
   <script src="js/dashboard.js"></script>
   <script src="js/site.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 
 </body>
 </html>
