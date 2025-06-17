@@ -205,3 +205,15 @@ main {
   width: 100%;
   min-height: 250px;
 }
+#btnGenero,
+#btnIdade {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-group .btn.active {
+  background-color: #fff;
+  color: #153777;
+  border-color: #153777;
+}
