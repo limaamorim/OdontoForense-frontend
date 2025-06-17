@@ -479,14 +479,40 @@ function criarGraficoVitimas(tipo) {
         legend: { display: false }
       },
       scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Quantidade' }
-        },
-        x: {
-          title: { display: true, text: 'Gênero' }
-        }
+  y: {
+    title: {
+      display: true,
+      text: 'Quantidade',
+      color: '#153777',
+      font: {
+        size: 14,
+        weight: 'bold'
       }
+    },
+    ticks: {
+      font: {
+        size: 12
+      }
+    }
+  },
+  x: {
+    title: {
+      display: true,
+      text: 'Gênero',
+      color: '#153777',
+      font: {
+        size: 14,
+        weight: 'bold'
+      }
+    },
+    ticks: {
+      font: {
+        size: 12
+      }
+    }
+  }
+}
+
     }
   });
 } else {
@@ -524,14 +550,40 @@ function criarGraficoVitimas(tipo) {
         legend: { display: false }
       },
       scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Quantidade' }
-        },
-        x: {
-          title: { display: true, text: 'Faixa Etária' }
-        }
+  y: {
+    title: {
+      display: true,
+      text: 'Quantidade',
+      color: '#153777',
+      font: {
+        size: 14,
+        weight: 'bold'
       }
+    },
+    ticks: {
+      font: {
+        size: 12
+      }
+    }
+  },
+  x: {
+    title: {
+      display: true,
+      text: 'Faixa Etária',
+      color: '#153777',
+      font: {
+        size: 14,
+        weight: 'bold'
+      }
+    },
+    ticks: {
+      font: {
+        size: 12
+      }
+    }
+  }
+}
+
     }
   });
 }
