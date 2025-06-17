@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = 'dashboard.html';
     return;
   }
-
+  window.graficoVitimas = null;
+  let dadosGenero = {};
+  let dadosIdade = {};
   let todosCasos = [];
 
   try {
@@ -281,15 +283,17 @@ async function carregarTotalEvidencias(token) {
     console.error('Erro ao carregar evidências:', err);
   }
 }
+
 function gerarGraficosVitimas(casos) {
-  const generoContagem = {
+  // Inicializar dados
+  dadosGenero = {
     masculino: 0,
     feminino: 0,
     outro: 0,
     'nao informado': 0
   };
 
-  const idadeContagem = {
+  dadosIdade = {
     bebe: 0,
     crianca: 0,
     adolescente: 0,
@@ -298,78 +302,135 @@ function gerarGraficosVitimas(casos) {
     nao_informado: 0
   };
 
+  // Contar vítimas (com verificação mais robusta)
   casos.forEach(caso => {
-    if (!caso.vitimas) return;
+    if (!caso.vitimas || !Array.isArray(caso.vitimas)) return;
+    
     caso.vitimas.forEach(v => {
-      const genero = (v.genero || 'nao informado').toLowerCase();
-      const idade = (v.idade || 'nao_informado').toLowerCase();
+      const genero = (v.genero || 'nao informado').toLowerCase().trim();
+      const idade = (v.idade || 'nao_informado').toLowerCase().trim();
 
-      if (generoContagem[genero] !== undefined) generoContagem[genero]++;
-      if (idadeContagem[idade] !== undefined) idadeContagem[idade]++;
+      if (dadosGenero[genero] !== undefined) dadosGenero[genero]++;
+      if (dadosIdade[idade] !== undefined) dadosIdade[idade]++;
     });
   });
 
+  console.log('Dados Gênero:', dadosGenero); // Debug
+  console.log('Dados Idade:', dadosIdade);   // Debug
 
-const cards = document.querySelectorAll('.card-counter h1');
-if (cards.length > 3) {
-  const totalVitimas = casos.reduce((total, caso) => total + (caso.vitimas?.length || 0), 0);
-  cards[3].textContent = totalVitimas;
+  // Atualizar contador total de vítimas
+  const cards = document.querySelectorAll('.card-counter h1');
+  if (cards.length > 3) {
+    const totalVitimas = casos.reduce((total, caso) => total + (caso.vitimas?.length || 0), 0);
+    cards[3].textContent = totalVitimas;
+  }
+
+  // Verificar se o canvas existe antes de criar o gráfico
+  const canvas = document.getElementById('graficoVitimas');
+  if (!canvas) {
+    console.error('Elemento canvas não encontrado!');
+    return;
+  }
+
+  // Criar gráfico inicial (gênero)
+  criarGraficoVitimas('genero');
+
+  // Configurar botões de alternância (com verificação de existência)
+  const btnGenero = document.getElementById('btnGenero');
+  const btnIdade = document.getElementById('btnIdade');
+  
+  if (btnGenero && btnIdade) {
+    btnGenero.addEventListener('click', () => {
+      btnGenero.classList.add('active');
+      btnIdade.classList.remove('active');
+      criarGraficoVitimas('genero');
+    });
+
+    btnIdade.addEventListener('click', () => {
+      btnIdade.classList.add('active');
+      btnGenero.classList.remove('active');
+      criarGraficoVitimas('idade');
+    });
+  }
 }
 
-// Gênero
-const ctxGenero = document.getElementById('graficoGeneroVitimas')?.getContext('2d');
-
-  if (window.graficoGenero) window.graficoGenero.destroy();
-  if (ctxGenero) {
-    window.graficoGenero = new Chart(ctxGenero, {
-  type: 'polarArea',
-  data: {
-    labels: Object.keys(generoContagem),
-    datasets: [{
-      data: Object.values(generoContagem),
-      backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd']
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: 'right' },
-    }
-  }
-});
-
+function criarGraficoVitimas(tipo) {
+  const ctx = document.getElementById('graficoVitimas')?.getContext('2d');
+  if (!ctx) {
+    console.error('Contexto do canvas não encontrado');
+    return;
   }
 
-  // Idade
-  const ctxIdade = document.getElementById('graficoIdadeVitimas')?.getContext('2d');
-  if (window.graficoIdade) window.graficoIdade.destroy();
-  if (ctxIdade) {
-    window.graficoIdade = new Chart(ctxIdade, {
-  type: 'radar',
-  data: {
-    labels: Object.keys(idadeContagem),
-    datasets: [{
-      label: 'Vítimas por Idade',
-      data: Object.values(idadeContagem),
-      fill: true,
-      backgroundColor: 'rgba(32, 201, 151, 0.4)',
-      borderColor: '#20c997',
-      pointBackgroundColor: '#20c997',
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      r: {
-        angleLines: { display: true },
-        suggestedMin: 0
+  // Destruir gráfico anterior apenas se existir e for válido
+  if (window.graficoVitimas && typeof window.graficoVitimas.destroy === 'function') {
+    window.graficoVitimas.destroy();
+  }
+
+  if (tipo === 'genero') {
+    graficoVitimas = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(dadosGenero).map(key => 
+          key === 'masculino' ? 'Masculino' :
+          key === 'feminino' ? 'Feminino' :
+          key === 'outro' ? 'Outro' : 'Não informado'),
+        datasets: [{
+          label: 'Vítimas por Gênero',
+          data: Object.values(dadosGenero),
+          backgroundColor: ['#0d6efd', '#dc3545', '#6f42c1', '#adb5bd'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Quantidade' }
+          },
+          x: {
+            title: { display: true, text: 'Gênero' }
+          }
+        }
       }
-    }
-  }
-});
-
+    });
+  } else {
+    graficoVitimas = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(dadosIdade).map(key => 
+          key === 'bebe' ? 'Bebê' :
+          key === 'crianca' ? 'Criança' :
+          key === 'adolescente' ? 'Adolescente' :
+          key === 'adulta' ? 'Adulto' :
+          key === 'idosa' ? 'Idoso' : 'Não informado'),
+        datasets: [{
+          label: 'Vítimas por Idade',
+          data: Object.values(dadosIdade),
+          backgroundColor: '#20c997',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Quantidade' }
+          },
+          x: {
+            title: { display: true, text: 'Faixa Etária' }
+          }
+        }
+      }
+    });
   }
 }
