@@ -149,29 +149,24 @@
               </div>
             </div>
           </div>
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">
-                  <i class="bi bi-gender-ambiguous me-2"></i>Distribuição por Gênero das Vítimas
-                </div>
-                <div class="card-body">
-                  <canvas id="graficoGeneroVitimas"></canvas>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">
-                  <i class="bi bi-person-lines-fill me-2"></i>Distribuição de Idade das Vítimas
-                </div>
-                <div class="card-body">
-                  <canvas id="graficoIdadeVitimas"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          
+          <div class="col-md-6">
+  <div class="card shadow-sm h-100">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <div>
+        <i class="bi bi-people-fill me-2"></i>Distribuição das Vítimas
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-primary active" id="btnGenero">Gênero</button>
+        <button type="button" class="btn btn-primary" id="btnIdade">Idade</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="chart-container" style="position: relative; height: 250px;">
+        <canvas id="graficoVitimas"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
               <i class="bi bi-geo-alt-fill me-2"></i>Mapa dos Locais dos Casos
