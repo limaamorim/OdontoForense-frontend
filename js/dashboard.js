@@ -84,53 +84,73 @@ function carregarResumoCasosFiltrados(casos) {
   });
 
   // Gráfico de linha por dia
-  const casosPorDia = {};
+  // Agrupar os dados por mês a partir da lista de casos
+  const casosPorMes = {};
   casos.forEach(caso => {
     const data = new Date(caso.dataOcorrido);
-    const chave = `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}`;
-    casosPorDia[chave] = (casosPorDia[chave] || 0) + 1;
+    if (isNaN(data)) return;
+    const mesAno = `${String(data.getMonth() + 1).padStart(2, '0')}/${data.getFullYear()}`;
+    casosPorMes[mesAno] = (casosPorMes[mesAno] || 0) + 1;
   });
 
-  const diasOrdenados = Object.keys(casosPorDia).sort((a, b) => {
-    const [diaA, mesA] = a.split('/').map(Number);
-    const [diaB, mesB] = b.split('/').map(Number);
-    return new Date(2000, mesA - 1, diaA) - new Date(2000, mesB - 1, diaB);
+  // Obter os meses ordenados
+  const mesesOrdenados = Object.keys(casosPorMes).sort((a, b) => {
+    const [mesA, anoA] = a.split('/').map(Number);
+    const [mesB, anoB] = b.split('/').map(Number);
+    return new Date(anoA, mesA - 1) - new Date(anoB, mesB - 1);
   });
 
-  const ctxLinha = document.getElementById('graficoCasosPorMes').getContext('2d');
-  if (window.graficoLinha) window.graficoLinha.destroy();
-  window.graficoLinha = new Chart(ctxLinha, {
-    type: 'line',
-    data: {
-      labels: diasOrdenados,
-      datasets: [{
-        label: 'Casos por Dia',
-        data: diasOrdenados.map(d => casosPorDia[d]),
-        borderColor: '#0d6efd',
-        backgroundColor: 'rgba(13, 110, 253, 0.2)',
-        fill: true,
-        tension: 0.3,
-        pointBackgroundColor: '#0d6efd'
-      }]
+// Calcular o valor máximo para ajustar o eixo Y
+const valores = mesesOrdenados.map(m => casosPorMes[m]);
+const maxValor = Math.max(...valores);
+const paddingY = Math.ceil(maxValor * 0.25); // 15% de folga visual
+
+// Criar o gráfico com os dados mensais
+const ctxLinha = document.getElementById('graficoCasosPorMes').getContext('2d');
+if (window.graficoLinha) window.graficoLinha.destroy();
+window.graficoLinha = new Chart(ctxLinha, {
+  type: 'line',
+  data: {
+    labels: mesesOrdenados,
+    datasets: [{
+      label: 'Casos por Mês',
+      data: valores,
+      borderColor: '#0d6efd',
+      backgroundColor: 'rgba(13, 110, 253, 0.2)',
+      fill: true,
+      tension: 0.3,
+      pointBackgroundColor: '#0d6efd',
+      clip: false // impede o corte lateral dos dados/rótulos
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        font: { weight: 'bold' },
+        formatter: (value) => value,
+        color: '#0d6efd',
+        clamp: true, // impede o corte do rótulo
+        clip: false
+      }
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: maxValor + paddingY,
+        title: { display: true, text: 'Quantidade de Casos' }
       },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Quantidade de Casos' }
-        },
-        x: {
-          title: { display: true, text: 'Dia/Mês' }
-        }
+      x: {
+        title: { display: true, text: 'Mês/Ano' }
       }
     }
-  });
-
+  },
+  plugins: [ChartDataLabels]
+});
   exibirMapaDeCasos(casos);
 }
 
